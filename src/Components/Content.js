@@ -30,7 +30,7 @@ const Content = (props) => {
 
 
     const [{ isOver }, drop] = useDrop({
-        accept: ItemTypes.CARD,
+        accept: ItemTypes.WIDGET,
         drop: (item, monitor) => {
 
             if (row.length < 4) {
