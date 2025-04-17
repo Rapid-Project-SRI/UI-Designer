@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 
 const dataset = [
@@ -11,16 +11,21 @@ const dataset = [
   {key: 'Jul', value: 40}
 ];
 
-export default function Chart() {
+
+const xAxisProperties = [{ scaleType: 'band', dataKey: 'key'}];
+const seriesProperties = [{ dataKey: 'value', label: 'Value' }];
+
+const Bar = (props) => {
   return (
     <BarChart
       dataset={dataset}
-      xAxis={[{ scaleType: 'band', dataKey: 'key'}]}
-      series={[
-        { dataKey: 'value', label: 'Value' }
-      ]}
+      xAxis={xAxisProperties}
+      series={seriesProperties}
       width={500}
       height={300}
+      tooltip={{trigger: 'none'}}
     />
   );
 }
+
+export default Bar;

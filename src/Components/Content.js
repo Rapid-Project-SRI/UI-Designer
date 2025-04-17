@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { useDrop } from 'react-dnd'
 import Draggable from 'react-draggable'
-import LineChart from '../Charts/LineChart'
-import BarChart from '../Charts/BarChart'
-import Chart from '../Charts/Chart'
-import PieChart from '../Charts/PieChart'
+import Chart_Line from '../Charts/Chart_Line'
+import Chart_Bar from '../Charts/Chart_Bar'
 import { ItemTypes } from './ItemTypes'
 import WidgetPanel from './WidgetPanel'
 import './Content.css'
+import Chart_Pie from '../Charts/Chart_Pie'
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([])
@@ -77,11 +76,11 @@ const Content = (props) => {
               style={{ position: 'absolute', cursor: 'move' }}
             >
               {widget.name === 'Line' ? (
-                <LineChart />
+                <Chart_Line />
               ) : widget.name === 'Bar' ? (
-                <Chart />
+                <Chart_Bar />
               ) : (
-                <PieChart />
+                <Chart_Pie />
               )}
             </div>
           </Draggable>
