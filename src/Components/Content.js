@@ -1,54 +1,54 @@
-import React, { useState } from 'react'
-import { useDrop } from 'react-dnd'
-import Draggable from 'react-draggable'
-import LineChart from '../Charts/LineChart'
-import BarChart from '../Charts/BarChart'
-import PieChart from '../Charts/PieChart'
-import { ItemTypes } from './ItemTypes'
-import WidgetPanel from './WidgetPanel'
-import './Content.css'
+import React, { useState } from 'react';
+import { useDrop } from 'react-dnd';
+import Draggable from 'react-draggable';
+import LineChart from '../Charts/LineChart';
+import BarChart from '../Charts/BarChart';
+import PieChart from '../Charts/PieChart';
+import { ItemTypes } from './ItemTypes';
+import WidgetPanel from './WidgetPanel';
+import './Content.css';
 
 const Content = (props) => {
-  const [widgets, setWidgets] = useState([])
-  const [selectedWidget, setSelectedWidget] = useState(null)
+  const [widgets, setWidgets] = useState([]);
+  const [selectedWidget, setSelectedWidget] = useState(null);
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
     drop: (item, monitor) => {
-      const offset = monitor.getClientOffset()
-      const canvas = document.getElementById('canvas')
-      const canvasRect = canvas.getBoundingClientRect()
+      const offset = monitor.getClientOffset();
+      const canvas = document.getElementById('canvas');
+      const canvasRect = canvas.getBoundingClientRect();
 
       const newWidget = {
-        id: `${item.id}-${Date.now()}`,
+        id: `${item.id}-${Date.now()}`, 
         name: item.name,
         x: offset.x - canvasRect.left,
         y: offset.y - canvasRect.top
-      }
+      };
 
       setWidgets((prev) => {
-        props.change([...prev, newWidget])
-        return [...prev, newWidget]
-      })
+        props.change([...prev, newWidget]);
+        return [...prev, newWidget];
+      });
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver()
     })
-  })
+  });
 
   const handleWidgetClick = (widget) => {
-    setSelectedWidget(widget)
-  }
+    setSelectedWidget(widget);
+  };
 
   const handleClosePanel = () => {
-    setSelectedWidget(null)
-  }
+    setSelectedWidget(null);
+  };
 
   const updateWidgetPosition = (id, x, y) => {
     setWidgets((prev) =>
       prev.map((w) => (w.id === id ? { ...w, x, y } : w))
-    )
-  }
+    );
+  };
 
   return (
     <div style={{ display: 'flex' }}>
@@ -73,7 +73,13 @@ const Content = (props) => {
           >
             <div
               onClick={() => handleWidgetClick(widget)}
-              style={{ position: 'absolute', cursor: 'move' }}
+              style={{ 
+                position: 'absolute', 
+                cursor: 'move',
+                border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
+                borderRadius: '4px',
+                padding: '4px'
+              }}
             >
               {widget.name === 'Line' ? (
                 <LineChart />
@@ -87,9 +93,14 @@ const Content = (props) => {
         ))}
       </div>
 
-      {selectedWidget && <WidgetPanel onClose={handleClosePanel} />}
+      {selectedWidget && (
+        <WidgetPanel 
+          onClose={handleClosePanel}
+          widgetName={selectedWidget.name}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Content
+export default Content;
