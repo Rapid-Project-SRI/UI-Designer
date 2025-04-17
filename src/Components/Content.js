@@ -3,6 +3,7 @@ import { useDrop } from 'react-dnd'
 import Draggable from 'react-draggable'
 import LineChart from '../Charts/LineChart'
 import BarChart from '../Charts/BarChart'
+import Chart from '../Charts/Chart'
 import PieChart from '../Charts/PieChart'
 import { ItemTypes } from './ItemTypes'
 import WidgetPanel from './WidgetPanel'
@@ -78,7 +79,7 @@ const Content = (props) => {
               {widget.name === 'Line' ? (
                 <LineChart />
               ) : widget.name === 'Bar' ? (
-                <BarChart />
+                <Chart />
               ) : (
                 <PieChart />
               )}
