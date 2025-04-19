@@ -8,7 +8,7 @@ import { ItemTypes } from './ItemTypes';
 import WidgetPanel from './WidgetPanel';
 import './Content.css';
 
-
+ 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
   const [selectedWidget, setSelectedWidget] = useState(null);

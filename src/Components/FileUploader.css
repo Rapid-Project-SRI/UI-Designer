@@ -1,0 +1,59 @@
+.file-uploader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .upload-info {
+    font-style: italic;
+    color: gray;
+    margin-bottom: 1rem;
+  }
+  
+  .drop-zone {
+    width: 250px;
+    background-color: #e5e5e5;
+    border: 2px dashed #4b5563;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  
+  .upload-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .upload-text {
+    font-family: monospace;
+    font-size: 13px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .choose-files-button {
+    background-color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .choose-files-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .uploaded-files {
+    width: 250px;
+    margin-top: 1rem;
+    text-align: left;
+  }
+  
+  .uploaded-files ul {
+    padding-left: 1rem;
+    font-size: 14px;
+  }
+  
