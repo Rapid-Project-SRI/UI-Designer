@@ -7,6 +7,7 @@ import PieChart from '../Charts/PieChart';
 import { ItemTypes } from './ItemTypes';
 import WidgetPanel from './WidgetPanel';
 import './Content.css';
+import { GitBranch } from 'lucide-react';
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
@@ -20,10 +21,12 @@ const Content = (props) => {
       const canvasRect = canvas.getBoundingClientRect();
 
       const newWidget = {
-        id: `${item.id}-${Date.now()}`, 
+        id: `${item.id}-${Date.now()}`,
         name: item.name,
         x: offset.x - canvasRect.left,
-        y: offset.y - canvasRect.top
+        y: offset.y - canvasRect.top,
+        color: '#ffffff', // Standardfarbe
+        font: 'Arial' // Standardfont
       };
 
       setWidgets((prev) => {
@@ -50,6 +53,12 @@ const Content = (props) => {
     );
   };
 
+  const updateWidgetStyle = (id, changes) => {
+    setWidgets((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, ...changes } : w))
+    );
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       <div
@@ -73,12 +82,14 @@ const Content = (props) => {
           >
             <div
               onClick={() => handleWidgetClick(widget)}
-              style={{ 
-                position: 'absolute', 
+              style={{
+                position: 'absolute',
                 cursor: 'move',
                 border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
                 borderRadius: '4px',
-                padding: '4px'
+                padding: '4px',
+                backgroundColor: widget.color || '#ffffff',
+                fontFamily: widget.font || 'Arial'
               }}
             >
               {widget.name === 'Line' ? (
@@ -94,9 +105,15 @@ const Content = (props) => {
       </div>
 
       {selectedWidget && (
-        <WidgetPanel 
+        <WidgetPanel
           onClose={handleClosePanel}
           widgetName={selectedWidget.name}
+          CustomWidgetProps={{
+            onColorChange: (color) =>
+              updateWidgetStyle(selectedWidget.id, { color }),
+            onFontChange: (font) =>
+              updateWidgetStyle(selectedWidget.id, { font })
+          }}
         />
       )}
     </div>
