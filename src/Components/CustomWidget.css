@@ -1,0 +1,112 @@
+.custom-widget {
+  width: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.dropdown-label {
+  margin-right: auto;
+  font-weight: 500;
+}
+
+.color-preview {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin: 0 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.font-preview {
+  margin: 0 12px;
+  font-size: 18px;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+}
+
+.arrow.down {
+  border-top: 7px solid #333;
+}
+
+.arrow.up {
+  border-bottom: 7px solid #333;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* Stile für den react-colorful Color Picker */
+.react-colorful {
+  width: 100% !important;
+  height: 200px !important;
+  margin-bottom: 10px;
+}
+
+.react-colorful__saturation {
+  border-radius: 4px;
+  border-bottom: none;
+}
+
+.react-colorful__hue {
+  height: 30px;
+  border-radius: 4px;
+}
+
+.color-value {
+  text-align: center;
+  font-family: monospace;
+  font-size: 14px;
+  color: #666;
+}
+
+.font-menu {
+  padding: 5px 0;
+}
+
+.font-option {
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.font-option:hover {
+  background-color: #f0f0f0;
+}
