@@ -4,6 +4,10 @@ import Draggable from 'react-draggable';
 import LineChart from '../Charts/LineChart';
 import BarChart from '../Charts/BarChart';
 import PieChart from '../Charts/PieChart';
+import ButtonWidget from '../Widgets/ButtonWidget';
+import SwitchWidget from '../Widgets/SwitchWidget';
+import GaugeWidget from '../Widgets/GaugeWidget';
+import TextDisplayWidget from '../Widgets/TextDisplayWidget';
 import { ItemTypes } from './ItemTypes';
 import WidgetPanel from './WidgetPanel';
 import './Content.css';
@@ -73,35 +77,42 @@ const Content = (props) => {
           background: isOver ? '#f0f8ff' : 'white'
         }}
       >
-        {widgets.map((widget) => (
-          <Draggable
-            key={widget.id}
-            bounds="parent"
-            position={{ x: widget.x, y: widget.y }}
-            onStop={(e, data) => updateWidgetPosition(widget.id, data.x, data.y)}
-          >
-            <div
-              onClick={() => handleWidgetClick(widget)}
-              style={{
-                position: 'absolute',
-                cursor: 'move',
-                border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
-                borderRadius: '4px',
-                padding: '4px',
-                backgroundColor: widget.color || '#ffffff',
-                fontFamily: widget.font || 'Arial'
-              }}
+        {/* Map widget names to components for clean, generic rendering */}
+        {widgets.map((widget) => {
+          const widgetMap = {
+            Line: LineChart,
+            Bar: BarChart,
+            Pie: PieChart,
+            Button: ButtonWidget,
+            Switch: SwitchWidget,
+            Gauge: GaugeWidget,
+            TextDisplay: TextDisplayWidget
+          };
+          const WidgetComponent = widgetMap[widget.name];
+          return (
+            <Draggable
+              key={widget.id}
+              bounds="parent"
+              position={{ x: widget.x, y: widget.y }}
+              onStop={(e, data) => updateWidgetPosition(widget.id, data.x, data.y)}
             >
-              {widget.name === 'Line' ? (
-                <LineChart />
-              ) : widget.name === 'Bar' ? (
-                <BarChart />
-              ) : (
-                <PieChart />
-              )}
-            </div>
-          </Draggable>
-        ))}
+              <div
+                onClick={() => handleWidgetClick(widget)}
+                style={{
+                  position: 'absolute',
+                  cursor: 'move',
+                  border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
+                  borderRadius: '4px',
+                  padding: '4px',
+                  backgroundColor: widget.color || '#ffffff',
+                  fontFamily: widget.font || 'Arial'
+                }}
+              >
+                {WidgetComponent ? <WidgetComponent /> : null}
+              </div>
+            </Draggable>
+          );
+        })}
       </div>
 
       {selectedWidget && (
