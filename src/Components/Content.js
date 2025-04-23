@@ -7,11 +7,16 @@ import PieChart from '../Charts/PieChart';
 import { ItemTypes } from './ItemTypes';
 import WidgetPanel from './WidgetPanel';
 import './Content.css';
-import { GitBranch } from 'lucide-react';
+import {useSocketData } from '../hooks/useSocketData';
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
   const [selectedWidget, setSelectedWidget] = useState(null);
+
+  // Socket data from backend
+  const barData = useSocketData('topic_bar_data');
+  const lineData = useSocketData('topic_line_data');  // ther is no real data for now
+  const pieData = useSocketData('topic_pie_data');    // ther is no real data for now
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
@@ -25,8 +30,8 @@ const Content = (props) => {
         name: item.name,
         x: offset.x - canvasRect.left,
         y: offset.y - canvasRect.top,
-        color: '#ffffff', // Standardfarbe
-        font: 'Arial' // Standardfont
+        color: '#ffffff',
+        font: 'Arial'
       };
 
       setWidgets((prev) => {
@@ -59,6 +64,36 @@ const Content = (props) => {
     );
   };
 
+  const renderWidget = (widget) => {
+    const chartProps = {
+      Bar: <BarChart chartData={barData} />
+    };
+
+    return (
+      <Draggable
+        key={widget.id}
+        bounds="parent"
+        position={{ x: widget.x, y: widget.y }}
+        onStop={(e, data) => updateWidgetPosition(widget.id, data.x, data.y)}
+      >
+        <div
+          onClick={() => handleWidgetClick(widget)}
+          style={{
+            position: 'absolute',
+            cursor: 'move',
+            border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
+            borderRadius: '4px',
+            padding: '4px',
+            backgroundColor: widget.color || '#ffffff',
+            fontFamily: widget.font || 'Arial'
+          }}
+        >
+          {chartProps[widget.name] || <div>Unknown Widget</div>}
+        </div>
+      </Draggable>
+    );
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       <div
@@ -73,35 +108,7 @@ const Content = (props) => {
           background: isOver ? '#f0f8ff' : 'white'
         }}
       >
-        {widgets.map((widget) => (
-          <Draggable
-            key={widget.id}
-            bounds="parent"
-            position={{ x: widget.x, y: widget.y }}
-            onStop={(e, data) => updateWidgetPosition(widget.id, data.x, data.y)}
-          >
-            <div
-              onClick={() => handleWidgetClick(widget)}
-              style={{
-                position: 'absolute',
-                cursor: 'move',
-                border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
-                borderRadius: '4px',
-                padding: '4px',
-                backgroundColor: widget.color || '#ffffff',
-                fontFamily: widget.font || 'Arial'
-              }}
-            >
-              {widget.name === 'Line' ? (
-                <LineChart />
-              ) : widget.name === 'Bar' ? (
-                <BarChart />
-              ) : (
-                <PieChart />
-              )}
-            </div>
-          </Draggable>
-        ))}
+        {widgets.map((widget) => renderWidget(widget))}
       </div>
 
       {selectedWidget && (
