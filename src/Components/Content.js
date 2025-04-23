@@ -1,63 +1,54 @@
-import React, { useState } from 'react';
-import { useDrop } from 'react-dnd';
-import Draggable from 'react-draggable';
+import React, { useState } from 'react'
+import { useDrop } from 'react-dnd'
+import Draggable from 'react-draggable'
 import Chart_Line from '../Charts/Chart_Line'
 import Chart_Bar from '../Charts/Chart_Bar'
+import { ItemTypes } from './ItemTypes'
+import WidgetPanel from './WidgetPanel'
+import './Content.css'
 import Chart_Pie from '../Charts/Chart_Pie'
-import { ItemTypes } from './ItemTypes';
-import WidgetPanel from './WidgetPanel';
-import './Content.css';
-import { GitBranch } from 'lucide-react';
 
 const Content = (props) => {
-  const [widgets, setWidgets] = useState([]);
-  const [selectedWidget, setSelectedWidget] = useState(null);
+  const [widgets, setWidgets] = useState([])
+  const [selectedWidget, setSelectedWidget] = useState(null)
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
     drop: (item, monitor) => {
-      const offset = monitor.getClientOffset();
-      const canvas = document.getElementById('canvas');
-      const canvasRect = canvas.getBoundingClientRect();
+      const offset = monitor.getClientOffset()
+      const canvas = document.getElementById('canvas')
+      const canvasRect = canvas.getBoundingClientRect()
 
       const newWidget = {
         id: `${item.id}-${Date.now()}`,
         name: item.name,
         x: offset.x - canvasRect.left,
-        y: offset.y - canvasRect.top,
-        color: '#ffffff', // Standardfarbe
-        font: 'Arial' // Standardfont
-      };
+        y: offset.y - canvasRect.top
+      }
 
       setWidgets((prev) => {
-        props.change([...prev, newWidget]);
-        return [...prev, newWidget];
-      });
+        props.change([...prev, newWidget])
+        return [...prev, newWidget]
+      })
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver()
     })
-  });
+  })
 
   const handleWidgetClick = (widget) => {
-    setSelectedWidget(widget);
-  };
+    setSelectedWidget(widget)
+  }
 
   const handleClosePanel = () => {
-    setSelectedWidget(null);
-  };
+    setSelectedWidget(null)
+  }
 
   const updateWidgetPosition = (id, x, y) => {
     setWidgets((prev) =>
       prev.map((w) => (w.id === id ? { ...w, x, y } : w))
-    );
-  };
-
-  const updateWidgetStyle = (id, changes) => {
-    setWidgets((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, ...changes } : w))
-    );
-  };
+    )
+  }
 
   return (
     <div style={{ display: 'flex' }}>
@@ -82,15 +73,7 @@ const Content = (props) => {
           >
             <div
               onClick={() => handleWidgetClick(widget)}
-              style={{
-                position: 'absolute',
-                cursor: 'move',
-                border: selectedWidget?.id === widget.id ? '2px solid #1890ff' : 'none',
-                borderRadius: '4px',
-                padding: '4px',
-                backgroundColor: widget.color || '#ffffff',
-                fontFamily: widget.font || 'Arial'
-              }}
+              style={{ position: 'absolute', cursor: 'move' }}
             >
               {widget.name === 'Line' ? (
                 <Chart_Line />
@@ -104,20 +87,9 @@ const Content = (props) => {
         ))}
       </div>
 
-      {selectedWidget && (
-        <WidgetPanel
-          onClose={handleClosePanel}
-          widgetName={selectedWidget.name}
-          CustomWidgetProps={{
-            onColorChange: (color) =>
-              updateWidgetStyle(selectedWidget.id, { color }),
-            onFontChange: (font) =>
-              updateWidgetStyle(selectedWidget.id, { font })
-          }}
-        />
-      )}
+      {selectedWidget && <WidgetPanel onClose={handleClosePanel} />}
     </div>
-  );
-};
+  )
+}
 
-export default Content;
+export default Content

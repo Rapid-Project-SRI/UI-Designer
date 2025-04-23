@@ -33,7 +33,9 @@ const PlaceHolder = (props) => {
                             </div>
                         )
                     })}
+
                 </div>
+
             </div>
         </div>
     </div>
