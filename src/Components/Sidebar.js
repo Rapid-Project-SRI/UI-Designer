@@ -7,6 +7,7 @@ import ButtonWidget from '../Widgets/ButtonWidget';
 import SwitchWidget from '../Widgets/SwitchWidget';
 import GaugeWidget from '../Widgets/GaugeWidget';
 import TextDisplayWidget from '../Widgets/TextDisplayWidget';
+import { useSocketData } from '../hooks/useSocketData';
 
 const Sidebar=(props)=>{
     // Add new widgets to the list
@@ -19,6 +20,9 @@ const Sidebar=(props)=>{
         { name: "Switch", id: 6, type: 'producer' },
         { name: "Gauge", id: 7, type: 'consumer' }
     ];
+
+    const barData = useSocketData('topic_bar_data');
+
     return(
     <div style={{backgroundColor:"#EBEBEB",width:300,display:"flex",flexDirection:"column",alignItems:"center"}}>
         <br></br>
@@ -28,7 +32,7 @@ const Sidebar=(props)=>{
                 case "Line":
                     return (<LineWidget key={index} name={ele.name} _id={ele.id} />);
                 case "Bar":
-                    return (<BarWidget key={index} name={ele.name} _id={ele.id} />);
+                    return (<BarWidget key={index} name={ele.name} _id={ele.id} chartData={barData} />);
                 case "Pie":
                     return (<PieWidget key={index} name={ele.name} _id={ele.id} />);
                 case "Button":

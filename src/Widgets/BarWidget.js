@@ -1,11 +1,13 @@
 import React from 'react'
 import { useDrag } from 'react-dnd';
 import {ItemTypes} from '../Components/ItemTypes'
-import Bar from '../Images/bar.jpg'
 import { BarChart } from '@mui/x-charts/BarChart';
+
 const BarWidget=(props)=>{
+    const { chartData, name, _id } = props;
+    
     const dataset = [
-        {key: 'Jan', value: 65},
+        {key: 'Jan', value: chartData.datasets[0].data},
         {key: 'Feb', value: 59},
         {key: 'Mar', value: 80},
         {key: 'Apr', value: 81},
@@ -20,13 +22,20 @@ const BarWidget=(props)=>{
     const [{ isDragging }, drag] = useDrag({
 		item: {
 			type: ItemTypes.WIDGET,
-            id: props._id,
-            name:props.name
+            id: _id,
+            name:name
 		},
 		collect: monitor => ({
 			isDragging: !!monitor.isDragging(),
 		}),
 	});
+
+    console.log(chartData)
+
+    if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
+        return <p>Loading chart data...</p>;
+    }
+    
     return(
         <div ref={drag} style={{ margin: 10, opacity: isDragging ? 0.5 : 1 }}>
             <BarChart 

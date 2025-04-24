@@ -12,10 +12,13 @@ import { GitBranch } from 'lucide-react';
 import LineWidget from '../Widgets/LineWidget';
 import BarWidget from '../Widgets/BarWidget';
 import PieWidget from '../Widgets/PieWidget';
+import { useSocketData } from '../hooks/useSocketData';
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
   const [selectedWidget, setSelectedWidget] = useState(null);
+
+  const barData = useSocketData('topic_bar_data');
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
@@ -80,13 +83,13 @@ const Content = (props) => {
         {/* Map widget names to components for clean, generic rendering */}
         {widgets.map((widget) => {
           const widgetMap = {
-            Line: LineWidget,
-            Bar: BarWidget,
-            Pie: PieWidget,
-            Button: ButtonWidget,
-            Switch: SwitchWidget,
-            Gauge: GaugeWidget,
-            TextDisplay: TextDisplayWidget
+            Line: <LineWidget />,
+            Bar: <BarWidget chartData={barData}/>,
+            Pie: <PieWidget />,
+            Button: <ButtonWidget />,
+            Switch: <SwitchWidget />,
+            Gauge: <GaugeWidget />,
+            TextDisplay: <TextDisplayWidget />
           };
           const WidgetComponent = widgetMap[widget.name];
           return (
@@ -108,7 +111,7 @@ const Content = (props) => {
                   fontFamily: widget.font || 'Arial'
                 }}
               >
-                {WidgetComponent ? <WidgetComponent /> : null}
+                {WidgetComponent || null}
               </div>
             </Draggable>
           );
