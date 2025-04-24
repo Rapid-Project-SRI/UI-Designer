@@ -8,9 +8,17 @@ const PlaceHolder = (props) => {
     const changeHandler = (index, data) => {
         setUserData({ ...userData, [index]: [...data] })
     }
+    // downloads UI design (without stream connections) to JSON
     const save = () => {
-        console.log(userData)
-        alert("Find the JSON for the current dashboard design in the console log.")
+        const blob = new Blob([JSON.stringify(userData[0], null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ui_design.json";
+        a.click();
+
+        URL.revokeObjectURL(url);
     }
     return (<div style={{ height: "100%" }}>
         <div style={{ backgroundColor: "black", minWidth: "100%", height: "5%", color: "white", display: "flex", alignItems: "center", padding: "10px 10px 10px 30px", fontWeight: "bold" }}>
