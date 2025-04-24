@@ -6,6 +6,23 @@ import { BarChart } from '@mui/x-charts/BarChart';
 const BarWidget=(props)=>{
     const { chartData, name, _id } = props;
     
+    const [{ isDragging }, drag] = useDrag({
+		item: {
+			type: ItemTypes.WIDGET,
+            id: _id,
+            name:name
+		},
+		collect: monitor => ({
+			isDragging: !!monitor.isDragging(),
+		}),
+	});
+
+    if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
+        return <p>Loading chart data...</p>;
+    }
+
+    console.log(chartData)
+
     const dataset = [
         {key: 'Jan', value: chartData.datasets[0].data},
         {key: 'Feb', value: 59},
@@ -18,23 +35,6 @@ const BarWidget=(props)=>{
 
     const xAxisProperties = [{ scaleType: 'band', dataKey: 'key'}];
     const seriesProperties = [{ dataKey: 'value', label: 'Value' }];
-    
-    const [{ isDragging }, drag] = useDrag({
-		item: {
-			type: ItemTypes.WIDGET,
-            id: _id,
-            name:name
-		},
-		collect: monitor => ({
-			isDragging: !!monitor.isDragging(),
-		}),
-	});
-
-    console.log(chartData)
-
-    if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
-        return <p>Loading chart data...</p>;
-    }
     
     return(
         <div ref={drag} style={{ margin: 10, opacity: isDragging ? 0.5 : 1 }}>
