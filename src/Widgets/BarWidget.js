@@ -24,13 +24,13 @@ const BarWidget=(props)=>{
     console.log(chartData)
 
     const dataset = [
-        {key: 'Jan', value: chartData.datasets[0].data},
-        {key: 'Feb', value: 59},
-        {key: 'Mar', value: 80},
-        {key: 'Apr', value: 81},
-        {key: 'May', value: 56},
-        {key: 'Jun', value: 55},
-        {key: 'Jul', value: 40}
+        {key: 'Jan', value: chartData.datasets[0].data[0]},
+        {key: 'Feb', value: chartData.datasets[0].data[1]},
+        {key: 'Mar', value: chartData.datasets[0].data[2]},
+        {key: 'Apr', value: chartData.datasets[0].data[3]},
+        {key: 'May', value: chartData.datasets[0].data[4]},
+        {key: 'Jun', value: chartData.datasets[0].data[5]},
+        {key: 'Jul', value: chartData.datasets[0].data[6]}
     ];
 
     const xAxisProperties = [{ scaleType: 'band', dataKey: 'key'}];

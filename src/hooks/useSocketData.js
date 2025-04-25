@@ -10,7 +10,7 @@ export const useSocketData = (topic) => {
   });
 
   useEffect(() => {
-    const handleData = (incoming) => {
+    const handleData = (val1, val2, val3, val4, val5, val6, val7) => {
       //console.log(`Received on topic ${topic}:`, incoming); // DEBUG
 
       setData({
@@ -21,7 +21,7 @@ export const useSocketData = (topic) => {
             backgroundColor: 'rgb(7, 154, 39)',
             borderColor: 'rgb(0, 0, 0)',
             borderWidth: 2,
-            data: [incoming]
+            data: [val1, val2, val3, val4, val5, val6, val7]
           }
         ]
       });
