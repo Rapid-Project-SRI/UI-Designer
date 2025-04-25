@@ -22,6 +22,7 @@ const Sidebar=(props)=>{
     ];
 
     const barData = useSocketData('topic_bar_data');
+    const lineData = useSocketData('topic_line_data');
 
     return(
     <div style={{backgroundColor:"#EBEBEB",width:300,display:"flex",flexDirection:"column",alignItems:"center"}}>
@@ -30,7 +31,7 @@ const Sidebar=(props)=>{
         {list.map((ele, index) => {
             switch (ele.name) {
                 case "Line":
-                    return (<LineWidget key={index} name={ele.name} _id={ele.id} />);
+                    return (<LineWidget key={index} name={ele.name} _id={ele.id} chartData={lineData}/>);
                 case "Bar":
                     return (<BarWidget key={index} name={ele.name} _id={ele.id} chartData={barData} />);
                 case "Pie":
