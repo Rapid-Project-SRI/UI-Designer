@@ -19,6 +19,7 @@ const Content = (props) => {
   const [selectedWidget, setSelectedWidget] = useState(null);
 
   const barData = useSocketData('topic_bar_data');
+  const lineData = useSocketData('topic_line_data');
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
@@ -83,7 +84,7 @@ const Content = (props) => {
         {/* Map widget names to components for clean, generic rendering */}
         {widgets.map((widget) => {
           const widgetMap = {
-            Line: <LineWidget />,
+            Line: <LineWidget chartData={lineData}/>,
             Bar: <BarWidget chartData={barData}/>,
             Pie: <PieWidget />,
             Button: <ButtonWidget />,
