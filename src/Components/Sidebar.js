@@ -7,7 +7,6 @@ import ButtonWidget from '../Widgets/ButtonWidget';
 import SwitchWidget from '../Widgets/SwitchWidget';
 import GaugeWidget from '../Widgets/GaugeWidget';
 import TextDisplayWidget from '../Widgets/TextDisplayWidget';
-import { useSocketData } from '../hooks/useSocketData';
 
 const Sidebar = (props) => {
     // Widget definitions
@@ -21,8 +20,21 @@ const Sidebar = (props) => {
         { name: "Gauge", id: 7, type: 'consumer' }
     ];
 
-    const barData = useSocketData('topic_bar_data');
-    const lineData = useSocketData('topic_line_data');
+    // Static data for sidebar icons
+    const staticBarData = {
+        datasets: [
+          {
+            data: [12, 19, 3, 5, 2, 3, 7] // 7 values for 7 months
+          }
+        ]
+    };
+    const staticLineData = {
+        datasets: [
+          {
+            data: [5, 10, 8, 12, 7, 9, 11] // 7 values for 7 months
+          }
+        ]
+    };
 
     // Group widgets by headings
     const groups = [
@@ -51,9 +63,11 @@ const Sidebar = (props) => {
     const renderWidget = (ele, index) => {
         switch (ele.name) {
             case "Line":
-                return (<LineWidget key={index} name={ele.name} _id={ele.id} chartData={lineData} />);
+                // Use static data for sidebar icon
+                return (<LineWidget key={index} name={ele.name} _id={ele.id} chartData={staticLineData} />);
             case "Bar":
-                return (<BarWidget key={index} name={ele.name} _id={ele.id} chartData={barData} />);
+                // Use static data for sidebar icon
+                return (<BarWidget key={index} name={ele.name} _id={ele.id} chartData={staticBarData} />);
             case "Pie":
                 return (<PieWidget key={index} name={ele.name} _id={ele.id} />);
             case "Button":
