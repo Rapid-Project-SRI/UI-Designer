@@ -9,8 +9,18 @@ const PlaceHolder = (props) => {
         setUserData({ ...userData, [index]: [...data] })
     }
     const save = () => {
-        console.log(userData)
-        alert("Find the JSON for the current dashboard design in the console log.")
+        const dataStr = JSON.stringify(userData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+      
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ui-design.json';
+        a.click();
+      
+        URL.revokeObjectURL(url);
+      
+        alert("Saved current UI design as JSON.");
     }
     return (<div style={{ height: "100%" }}>
         <div style={{ backgroundColor: "black", minWidth: "100%", height: "5%", color: "white", display: "flex", alignItems: "center", padding: "10px 10px 10px 30px", fontWeight: "bold" }}>
