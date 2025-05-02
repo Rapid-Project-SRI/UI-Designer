@@ -22,6 +22,8 @@ const GaugeWidget = ({ value = 50, min = 0, max = 100, label = 'Gauge', _id, nam
   });
   // Normalize value between 0-100 for the progress bar
   const percentage = ((value - min) / (max - min)) * 100;
+  console.log("value", value)
+  console.log("percentage", percentage)
   return (
     <div ref={drag} style={{ width: 80, margin: '0 auto', textAlign: 'center', opacity: isDragging ? 0.5 : 1 }}>
       <CircularProgressbar

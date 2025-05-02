@@ -14,6 +14,7 @@ import BarWidget from '../Widgets/BarWidget';
 import PieWidget from '../Widgets/PieWidget';
 import { useSocketData } from '../hooks/useSocketData';
 import PropertiesPopup from './PropertiesPopup';
+import { useGaugeValue } from '../hooks/useGaugeValue';
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
@@ -21,6 +22,7 @@ const Content = (props) => {
 
   const barData = useSocketData('topic_bar_data');
   const lineData = useSocketData('topic_line_data');
+  const gaugeValue = useGaugeValue();
 
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.WIDGET,
@@ -105,9 +107,9 @@ const Content = (props) => {
             Line: <LineWidget chartData={lineData}/>,
             Bar: <BarWidget chartData={barData}/>,
             Pie: <PieWidget />,
-            Button: <ButtonWidget />,
+            Button: <ButtonWidget topic="event_node_1"/>,
             Switch: <SwitchWidget />,
-            Gauge: <GaugeWidget />,
+            Gauge: <GaugeWidget value={gaugeValue}/>,
             TextDisplay: <TextDisplayWidget />
           };
           const WidgetComponent = widgetMap[widget.name];
