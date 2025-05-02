@@ -1,0 +1,112 @@
+{
+    "nodes": [
+        {
+            "id": "node_1", 
+            "type": "eventNode",
+            "label": "event_node_1", 
+            "variableName": "event_node_1",
+            "position": {
+                "x": -64.91166022610906,
+                "y": 163.18358431066272
+            }
+        },
+        {
+            "id": "node_2",
+            "type": "dataProducerNode",
+            "label": "prod_node_2",
+            "variableName": "prod_node_2",
+            "pattern": [
+                {
+                    "data": 1,
+                    "delayTicks": 1
+                }
+            ],
+            "position": {
+                "x": 109.50074726838591,
+                "y": 146.0437348970604
+            },
+            "startTick": 0,
+            "endTick": 10
+        },
+        {
+            "id": "node_4",
+            "type": "dataProducerNode",
+            "label": "prod_node_4",
+            "variableName": "prod_node_4",
+            "pattern": [
+                {
+                    "data": 2,
+                    "delayTicks": 1
+                },
+                {
+                    "data": 3,
+                    "delayTicks": 1
+                },
+                {
+                    "data": -10,
+                    "delayTicks": 1
+                }
+            ],
+            "position": {
+                "x": 83.7846398167128,
+                "y": -27.191138229381338
+            },
+            "startTick": 0,
+            "endTick": 0
+        },
+        {
+            "id": "node_5",
+            "type": "combinerNode",
+            "label": "combine_node_5",
+            "variableName": "combine_node_5",
+            "position": {
+                "x": 370.78258406803866,
+                "y": 46.266204986513394
+            },
+            "mode": "zip"
+        },
+        {
+            "id": "node_7",
+            "type": "transformerNode",
+            "label": "calc_node_7",
+            "expression": "output = combine_node_5[0] + combine_node_5[1]",
+            "variableName": "calc_node_7",
+            "position": {
+                "x": 705.866155092578,
+                "y": 48.73190529331542
+            }
+        },
+        {
+            "id": "node_8",
+            "type": "outputNode",
+            "label": "output_node_8", 
+            "variableName": "output_node_8",
+            "position": {
+                "x": 1024.1440751265568,
+                "y": 52.018550389673365
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "node_1",
+            "target": "node_2"
+        },
+        {
+            "source": "node_4",
+            "target": "node_5"
+        },
+        {
+            "source": "node_2",
+            "target": "node_5"
+        },
+        {
+            "source": "node_5",
+            "target": "node_7"
+        },
+        {
+            "source": "node_7",
+            "target": "node_8"
+        }
+    ]
+}
