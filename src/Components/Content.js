@@ -107,7 +107,7 @@ const Content = (props) => {
             Line: <LineWidget chartData={lineData}/>,
             Bar: <BarWidget chartData={barData}/>,
             Pie: <PieWidget />,
-            Button: <ButtonWidget topic="event_node_1"/>,
+            Button: <ButtonWidget topic="event_node_3"/>,
             Switch: <SwitchWidget />,
             Gauge: <GaugeWidget value={gaugeValue}/>,
             TextDisplay: <TextDisplayWidget />

@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
 
-export const useGaugeValue = (topic = 'output_node_8') => {
+export const useGaugeValue = (topic = 'output_node_6') => {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
