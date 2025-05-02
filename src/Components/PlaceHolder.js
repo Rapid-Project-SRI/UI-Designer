@@ -9,7 +9,7 @@ const PlaceHolder = (props) => {
         setUserData({ ...userData, [index]: [...data] })
     }
     const save = () => {
-        const dataStr = JSON.stringify(userData, null, 2);
+        const dataStr = JSON.stringify(userData[0], null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
       
