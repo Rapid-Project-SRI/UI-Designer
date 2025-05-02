@@ -147,7 +147,6 @@ const Content = (props) => {
             >
               <PropertiesPopup
                 title={selectedWidget.name}
-                height={selectedWidget.height}
               />
             </div>
           )}
