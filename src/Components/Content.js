@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import Draggable from 'react-draggable';
 import ButtonWidget from '../Widgets/ButtonWidget';
@@ -13,6 +13,7 @@ import LineWidget from '../Widgets/LineWidget';
 import BarWidget from '../Widgets/BarWidget';
 import PieWidget from '../Widgets/PieWidget';
 import { useSocketData } from '../hooks/useSocketData';
+import PropertiesPopup from './PropertiesPopup';
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
@@ -34,7 +35,9 @@ const Content = (props) => {
         x: offset.x - canvasRect.left,
         y: offset.y - canvasRect.top,
         color: '#ffffff', // Standardfarbe
-        font: 'Arial' // Standardfont
+        font: 'Arial', // Standardfont
+        width: 100,
+        height: 50
       };
 
       setWidgets((prev) => {
@@ -47,8 +50,18 @@ const Content = (props) => {
     })
   });
 
+  const widgetRefs = useRef({}); // Store refs for all widgets
+
   const handleWidgetClick = (widget) => {
-    setSelectedWidget(widget);
+    const widgetElement = widgetRefs.current[widget.id];
+    if (widgetElement) {
+      const { offsetWidth, offsetHeight } = widgetElement; // Get the actual dimensions
+      setSelectedWidget({
+        ...widget,
+        width: offsetWidth,
+        height: offsetHeight
+      });
+    }
   };
 
   const handleClosePanel = () => {
@@ -80,6 +93,11 @@ const Content = (props) => {
           flex: 1,
           background: isOver ? '#f0f8ff' : 'white'
         }}
+        onClick={(e) => { // will deselect a selected widget if the canvas is clicked
+          if (e.target === e.currentTarget) {
+            handleClosePanel();
+          }
+        }}
       >
         {/* Map widget names to components for clean, generic rendering */}
         {widgets.map((widget) => {
@@ -101,6 +119,7 @@ const Content = (props) => {
               onStop={(e, data) => updateWidgetPosition(widget.id, data.x, data.y)}
             >
               <div
+                ref={(el) => (widgetRefs.current[widget.id] = el)} // Assign the ref
                 onClick={() => handleWidgetClick(widget)}
                 style={{
                   position: 'absolute',
@@ -116,8 +135,23 @@ const Content = (props) => {
               </div>
             </Draggable>
           );
-        })}
+          })}
+          {selectedWidget && (
+            <div
+              style={{
+                position: 'absolute',
+                left: `${selectedWidget.x + selectedWidget.width + 10}px`, // Position the popup to the right of the widget
+                top: `${selectedWidget.y}px`, // Align the popup vertically with the widget
+                zIndex: 1000
+              }}
+            >
+              <PropertiesPopup
+                title={selectedWidget.name}
+              />
+            </div>
+          )}
       </div>
+
 
       {selectedWidget && (
         <WidgetPanel
