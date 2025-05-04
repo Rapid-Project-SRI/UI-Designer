@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import './WidgetPanel.css';
 import FileUploader from './FileUploader';
 
-const WidgetPanel = ({ onClose, widgetName }) => {
-  const [fileData, setFileData] = useState(null);
+const WidgetPanel = ({ onClose, widgetName, fileData, onFileLoad, onNodeSelect, selectedNode }) => {
+  const [currentSelectedNode, setCurrentSelectedNode] = useState(selectedNode); // Initialize with the passed selectedNode
 
-  const handleFileLoad = (data) => {
-    setFileData(data);
-  };
-
-  const handleClear = () => {
-    setFileData(null);
+  const handleNodeClick = (node) => {
+    setCurrentSelectedNode(node.id); // Update the local selected node state
+    if (onNodeSelect) {
+      onNodeSelect(node); // Notify the parent component about the selected node
+    }
   };
 
   return (
@@ -22,20 +21,23 @@ const WidgetPanel = ({ onClose, widgetName }) => {
 
       <div className="sidebar-content">
         {!fileData ? (
-          <FileUploader onFileLoad={handleFileLoad} />
+          <FileUploader onFileLoad={onFileLoad} />
         ) : (
           <div>
             <div className="file-name-bar">
               <span>{fileData.fileName}</span>
-              <button className="clear-button" onClick={handleClear}>✕</button>
+              <button className="clear-button" onClick={() => setCurrentSelectedNode(null)}>✕</button>
             </div>
 
             {fileData.outputNodes.map((node) => (
-              <div className="node-box output" key={node.id}>
+              <div
+                className={`node-box output ${currentSelectedNode === node.id ? 'selected' : ''}`}
+                key={node.id}
+                onClick={() => handleNodeClick(node)}
+              >
                 <div className="node-header">
-                  <span className="node-icon">E</span>
+                  <span className="node-icon">O</span>
                   <span className="node-title">Output Stream</span>
-                  <span role="img" aria-label="eye">👁️</span>
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>
                 <p><strong>Variable Name:</strong> {node.variableName}</p>
@@ -43,9 +45,13 @@ const WidgetPanel = ({ onClose, widgetName }) => {
             ))}
 
             {fileData.eventNodes.map((node) => (
-              <div className="node-box input" key={node.id}>
+              <div
+                className={`node-box input ${currentSelectedNode === node.id ? 'selected' : ''}`}
+                key={node.id}
+                onClick={() => handleNodeClick(node)}
+              >
                 <div className="node-header">
-                  <span className="node-icon">O</span>
+                  <span className="node-icon">I</span>
                   <span className="node-title">Input Stream</span>
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>

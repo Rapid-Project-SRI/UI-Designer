@@ -14,10 +14,13 @@ import BarWidget from '../Widgets/BarWidget';
 import PieWidget from '../Widgets/PieWidget';
 import { useSocketData } from '../hooks/useSocketData';
 import PropertiesPopup from './PropertiesPopup';
+import Button from '@mui/material/Button';
+
 
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
   const [selectedWidget, setSelectedWidget] = useState(null);
+  const [fileData, setFileData] = useState(null); // File data persists across widgets
 
   const barData = useSocketData('topic_bar_data');
   const lineData = useSocketData('topic_line_data');
@@ -59,13 +62,39 @@ const Content = (props) => {
       setSelectedWidget({
         ...widget,
         width: offsetWidth,
-        height: offsetHeight
+        height: offsetHeight,
+        stream: widget.stream || null, // Load the stream
+        selectedNode: widget.selectedNode || null // Load the selected node
       });
+    }
+  };
+
+  const handleNodeSelect = (node) => {
+    if (selectedWidget) {
+      // Update the selected widget with the new node
+      setWidgets((prev) =>
+        prev.map((w) =>
+          w.id === selectedWidget.id
+            ? { ...w, selectedNode: node.id, stream: node } // Persist the selected node and stream
+            : w
+        )
+      );
+
+      // Update the selectedWidget state to reflect the new association
+      setSelectedWidget((prev) => ({
+        ...prev,
+        selectedNode: node.id,
+        stream: node // Update the stream property in the selectedWidget state
+      }));
     }
   };
 
   const handleClosePanel = () => {
     setSelectedWidget(null);
+  };
+
+  const handleFileLoad = (data) => {
+    setFileData(data); // Update fileData when a file is loaded
   };
 
   const updateWidgetPosition = (id, x, y) => {
@@ -78,6 +107,26 @@ const Content = (props) => {
     setWidgets((prev) =>
       prev.map((w) => (w.id === id ? { ...w, ...changes } : w))
     );
+  };
+
+  const saveDesign = () => {
+    const designData = widgets.map((widget) => ({
+      ...widget,
+      stream: widget.stream || null // Include stream in the saved data
+    }));
+
+    const dataStr = JSON.stringify(designData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ui-design.json';
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    alert('Saved current UI design as JSON.');
   };
 
   return (
@@ -157,14 +206,22 @@ const Content = (props) => {
         <WidgetPanel
           onClose={handleClosePanel}
           widgetName={selectedWidget.name}
+          fileData={fileData} // Pass fileData to WidgetPanel
+          onFileLoad={handleFileLoad} // Pass file load handler
           CustomWidgetProps={{
             onColorChange: (color) =>
               updateWidgetStyle(selectedWidget.id, { color }),
             onFontChange: (font) =>
               updateWidgetStyle(selectedWidget.id, { font })
           }}
+          onNodeSelect={handleNodeSelect} // Pass the node selection handler
+          selectedNode={selectedWidget.selectedNode} // Pass the selected node to the WidgetPanel
         />
       )}
+
+      <Button variant="contained" onClick={saveDesign} style={{ position: 'absolute', bottom: 0, right: 20 }}>
+        Download simulation
+      </Button>
     </div>
   );
 };
