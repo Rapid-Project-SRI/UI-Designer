@@ -121,7 +121,7 @@ const Content = (props) => {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ui-design.json';
+    a.download = 'simulation.json';
     a.click();
 
     URL.revokeObjectURL(url);
