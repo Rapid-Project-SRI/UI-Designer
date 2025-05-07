@@ -37,7 +37,7 @@ const WidgetPanel = ({ onClose, widgetName, fileData, onFileLoad, onNodeSelect, 
               >
                 <div className="node-header">
                   <span className="node-icon">O</span>
-                  <span className="node-title">Output Stream</span>
+                  <span className="node-title">Output Node</span>
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>
                 <p><strong>Variable Name:</strong> {node.variableName}</p>
@@ -51,8 +51,8 @@ const WidgetPanel = ({ onClose, widgetName, fileData, onFileLoad, onNodeSelect, 
                 onClick={() => handleNodeClick(node)}
               >
                 <div className="node-header">
-                  <span className="node-icon">I</span>
-                  <span className="node-title">Input Stream</span>
+                  <span className="node-icon">E</span>
+                  <span className="node-title">Event Node</span>
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>
                 <p><strong>Variable Name:</strong> {node.variableName}</p>

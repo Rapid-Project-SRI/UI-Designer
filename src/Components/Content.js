@@ -20,7 +20,8 @@ import Button from '@mui/material/Button';
 const Content = (props) => {
   const [widgets, setWidgets] = useState([]);
   const [selectedWidget, setSelectedWidget] = useState(null);
-  const [fileData, setFileData] = useState(null); // File data persists across widgets
+  const [fileData, setFileData] = useState(null); // Filtered or modified file data
+  const [originalFileData, setOriginalFileData] = useState(null); // Preserve the original uploaded file data
 
   const barData = useSocketData('topic_bar_data');
   const lineData = useSocketData('topic_line_data');
@@ -93,8 +94,9 @@ const Content = (props) => {
     setSelectedWidget(null);
   };
 
-  const handleFileLoad = (data) => {
-    setFileData(data); // Update fileData when a file is loaded
+  const handleFileLoad = ({ originalFileData: original, fileData: filtered }) => {
+    setOriginalFileData(original); // Store the original file data
+    setFileData(filtered); // Store the filtered file data
   };
 
   const updateWidgetPosition = (id, x, y) => {
@@ -110,10 +112,24 @@ const Content = (props) => {
   };
 
   const saveDesign = () => {
-    const designData = widgets.map((widget) => ({
-      ...widget,
-      stream: widget.stream || null // Include stream in the saved data
-    }));
+    if (!originalFileData) {
+      alert('No file uploaded. Please upload a JSON file first.');
+      return;
+    }
+
+    // Merge the original file data with the widgets
+    const designData = {
+      ...originalFileData, // Use the original file data
+      widgets: widgets.map((widget) => ({
+        id: widget.id,
+        name: widget.name,
+        x: widget.x,
+        y: widget.y,
+        color: widget.color,
+        font: widget.font,
+        selectedNode: widget.selectedNode || null // Include the ID of the connected node
+      }))
+    };
 
     const dataStr = JSON.stringify(designData, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -206,7 +222,7 @@ const Content = (props) => {
         <WidgetPanel
           onClose={handleClosePanel}
           widgetName={selectedWidget.name}
-          fileData={fileData} // Pass fileData to WidgetPanel
+          fileData={fileData} // Pass filtered or modified file data to WidgetPanel
           onFileLoad={handleFileLoad} // Pass file load handler
           CustomWidgetProps={{
             onColorChange: (color) =>

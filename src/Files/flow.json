@@ -1,9 +1,9 @@
 {
     "nodes": [
         {
-            "id": "node_1", 
+            "id": "node_1",
             "type": "eventNode",
-            "label": "event_node_1", 
+            "label": "event_node_1",
             "variableName": "event_node_1",
             "position": {
                 "x": -64.91166022610906,
@@ -79,7 +79,7 @@
         {
             "id": "node_8",
             "type": "outputNode",
-            "label": "output_node_8", 
+            "label": "output_node_8",
             "variableName": "output_node_8",
             "position": {
                 "x": 1024.1440751265568,

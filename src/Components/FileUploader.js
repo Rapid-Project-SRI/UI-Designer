@@ -8,16 +8,21 @@ const FileUploader = ({ onFileLoad }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const jsonData = JSON.parse(e.target.result);
+        const jsonData = JSON.parse(e.target.result); // Original file data
         if (!jsonData.nodes) throw new Error("Invalid file structure");
 
-        const eventNodes = jsonData.nodes.filter(n => n.type === "eventNode");
-        const outputNodes = jsonData.nodes.filter(n => n.type === "outputNode");
+        // Filter nodes for eventNodes and outputNodes
+        const eventNodes = jsonData.nodes.filter((n) => n.type === "eventNode");
+        const outputNodes = jsonData.nodes.filter((n) => n.type === "outputNode");
 
+        // Pass both original and filtered data to onFileLoad
         onFileLoad({
-          fileName: file.name,
-          eventNodes,
-          outputNodes
+          originalFileData: jsonData, // Preserve the original file data
+          fileData: {
+            fileName: file.name,
+            eventNodes,
+            outputNodes,
+          },
         });
       } catch (err) {
         alert("Invalid JSON file: " + err.message);
@@ -28,13 +33,13 @@ const FileUploader = ({ onFileLoad }) => {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const file = Array.from(e.dataTransfer.files).find(f => f.name.endsWith('.json'));
+    const file = Array.from(e.dataTransfer.files).find((f) => f.name.endsWith(".json"));
     if (file) handleFile(file);
     else alert("Please upload a .json file");
   };
 
   const handleChange = (e) => {
-    const file = Array.from(e.target.files).find(f => f.name.endsWith('.json'));
+    const file = Array.from(e.target.files).find((f) => f.name.endsWith(".json"));
     if (file) handleFile(file);
     else alert("Please upload a .json file");
   };
