@@ -20,8 +20,9 @@
 
 .content {
   display: flex;
+  width: 100%;
   height: 100vh;
-  width: 100vw;
+  overflow: hidden;
 }
 
 .flow-container {
@@ -68,4 +69,22 @@
 
 .react-flow__handle-bottom {
   bottom: -4px;
+}
+
+/* Ensure ReactFlow container takes full height */
+.react-flow__container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Style for the minimap */
+.react-flow__minimap {
+  bottom: 20px;
+  right: 20px;
+}
+
+/* Style for the controls */
+.react-flow__controls {
+  bottom: 20px;
+  left: 20px;
 }

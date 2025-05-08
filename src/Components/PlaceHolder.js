@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import Content from './Content'
-import Sidebar from './Sidebar'
-import Button from '@mui/material/Button';
+import React, { useState } from 'react';
+import Content from './Content';
+import Sidebar from './Sidebar';
+import { Box, Button, Typography } from '@mui/material';
 
 const PlaceHolder = (props) => {
   const [rowCount, setRowCount] = useState(1);
@@ -36,9 +36,10 @@ const PlaceHolder = (props) => {
   };
 
   return (
-    <div style={{ height: '100%' }}>
-      <div
-        style={{
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <Box
+        sx={{
           backgroundColor: 'black',
           minWidth: '100%',
           height: '5%',
@@ -50,49 +51,62 @@ const PlaceHolder = (props) => {
         }}
       >
         UI Designer
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'row', minHeight: '95%' }}>
-        <Sidebar></Sidebar>
-        <div style={{ flex: 1, margin: 10 }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
-            <h3>My UI Design</h3>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: 200
-              }}
+      </Box>
+
+      {/* Main Content Area */}
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        height: '95%',
+        overflow: 'hidden'
+      }}>
+       
+
+        {/* Content Area */}
+        <Box sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 2,
+          overflow: 'auto'
+        }}>
+          {/* Header with Title and Save Button */}
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2
+          }}>
+            <Typography variant="h5">My UI Design</Typography>
+            <Button
+              variant="contained"
+              onClick={save}
             >
-              <Button
-                variant="contained"
-                onClick={save}
+              DOWNLOAD DESIGN
+            </Button>
+          </Box>
+
+          {/* Content Rows */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {[...Array(rowCount)].map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  height: '400px', // Fixed height for each content area
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  overflow: 'hidden'
+                }}
               >
-                DOWNLOAD DESIGN
-              </Button>
-            </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {[...Array(rowCount)].map((_, index) => {
-              return (
-                <div key={index} style={{ marginBottom: 10 }}>
-                  <Content
-                    change={(data) => {
-                      changeHandler(index, data);
-                    }}
-                  ></Content>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
+                <Content
+                  change={(data) => changeHandler(index, data)}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
