@@ -8,12 +8,13 @@ import Button from '@mui/material/Button';
  * Props: label (string), onClick (function), variant (string), color (string)
  * Usage: <ButtonWidget label="Click me" onClick={...} variant="contained" color="primary" />
  */
-const ButtonWidget = ({ label = 'Button', onClick, variant = 'contained', color = 'primary', _id, name }) => {
+const ButtonWidget = ({ label = 'Button', onClick, variant = 'contained', color = 'primary', _id, name, source }) => {
   const [{ isDragging }, drag] = useDrag({
     item: {
       type: ItemTypes.WIDGET,
       id: _id,
-      name: name || label
+      name: name || label,
+      source: source || 'canvas'
     },
     collect: monitor => ({
       isDragging: !!monitor.isDragging(),
