@@ -1,0 +1,33 @@
+/* src/components/Canvas.css */
+
+/* full‐screen transparent overlay for drawing the first boundary */
+.canvas-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    cursor: crosshair;
+    z-index: 1;
+  }
+  
+  /* the rubber‐band rectangle while drawing */
+  .canvas-draft {
+    position: absolute;
+    border: 2px dashed #007bff;
+    background: rgba(0,123,255,0.1);
+    pointer-events: none;
+  }
+  
+  /* the final, resizable+draggable frame */
+  .canvas-frame {
+    border: 2px dashed rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+    z-index: 2;
+  }
+  
+  /* only allow drag from inside the frame, not the resize handles */
+  .canvas-frame-handle {
+    width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0;
+    cursor: move;
+  }
+  

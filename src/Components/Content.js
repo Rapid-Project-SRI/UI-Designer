@@ -15,6 +15,8 @@ import PieWidget from '../Widgets/PieWidget';
 import { useSocketData } from '../hooks/useSocketData';
 import PropertiesPopup from './PropertiesPopup';
 import Button from '@mui/material/Button';
+import Workspace from './Workspace';
+import Canvas from './Canvas';
 
 
 const Content = (props) => {
@@ -22,6 +24,7 @@ const Content = (props) => {
   const [selectedWidget, setSelectedWidget] = useState(null);
   const [fileData, setFileData] = useState(null); // Filtered or modified file data
   const [originalFileData, setOriginalFileData] = useState(null); // Preserve the original uploaded file data
+  const [boundary, setBoundary] = useState(null);
 
   const barData = useSocketData('topic_bar_data');
   const lineData = useSocketData('topic_line_data');
@@ -147,7 +150,7 @@ const Content = (props) => {
 
   return (
     <div style={{ display: 'flex' }}>
-      <div
+      {/* <div
         id="canvas"
         ref={drop}
         style={{
@@ -164,7 +167,6 @@ const Content = (props) => {
           }
         }}
       >
-        {/* Map widget names to components for clean, generic rendering */}
         {widgets.map((widget) => {
           const widgetMap = {
             Line: <LineWidget chartData={lineData}/>,
@@ -215,9 +217,14 @@ const Content = (props) => {
               />
             </div>
           )}
-      </div>
+      </div> */}
 
-
+      <Workspace>
+        <Canvas
+          initialBoundary={boundary}
+          onBoundaryChange={rect => setBoundary(rect)}
+        ></Canvas>
+      </Workspace>
       {selectedWidget && (
         <WidgetPanel
           onClose={handleClosePanel}
