@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { WidgetType } from '../storage/DesignStore';
 
 function WidgetPalette() {
+  const [isInteractiveOpen, setIsInteractiveOpen] = useState(false);
+  const [isDisplayDataOpen, setIsDisplayDataOpen] = useState(false);
+
   // When dragging starts, store the widget type in the dataTransfer object.
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, widgetType: WidgetType) => {
     event.dataTransfer.setData('application/reactflow', widgetType);
@@ -11,54 +14,74 @@ function WidgetPalette() {
   return (
     <aside style={{ padding: 10, background: '#f7f7f7', height: '100%', borderRight: '1px solid #ddd' }}>
       <div style={{ marginBottom: 10, fontWeight: 'bold' }}>Widgets</div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Button')}
-        draggable
-      >
-        Button Widget
+
+      <div>
+        <button onClick={() => setIsInteractiveOpen(!isInteractiveOpen)} style={{ width: '100%', textAlign: 'left' }}>
+          Interactive {isInteractiveOpen ? '▲' : '▼'}
+        </button>
+        {isInteractiveOpen && (
+          <div style={{ paddingLeft: 10 }}>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Button')}
+              draggable
+            >
+              Button Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Switch')}
+              draggable
+            >
+              Switch Widget
+            </div>
+          </div>
+        )}
       </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Gauge')}
-        draggable
-      >
-        Gauge Widget
-      </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Line')}
-        draggable
-      >
-        Line Widget
-      </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Pie')}
-        draggable
-      >
-        Pie Widget
-      </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Switch')}
-        draggable
-      >
-        Switch Widget
-      </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'TextDisplay')}
-        draggable
-      >
-        Text Display Widget
-      </div>
-      <div
-        style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
-        onDragStart={(event) => onDragStart(event, 'Bar')}
-        draggable
-      >
-        Bar Widget
+
+      <div>
+        <button onClick={() => setIsDisplayDataOpen(!isDisplayDataOpen)} style={{ width: '100%', textAlign: 'left' }}>
+          Display Data {isDisplayDataOpen ? '▲' : '▼'}
+        </button>
+        {isDisplayDataOpen && (
+          <div style={{ paddingLeft: 10 }}>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Gauge')}
+              draggable
+            >
+              Gauge Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Line')}
+              draggable
+            >
+              Line Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Pie')}
+              draggable
+            >
+              Pie Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'TextDisplay')}
+              draggable
+            >
+              Text Display Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'Bar')}
+              draggable
+            >
+              Bar Widget
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );
