@@ -10,8 +10,12 @@ export interface Widget {
     type: WidgetType;
     label: string;
     position: { x: number, y: number };
+    style: {
+        color: string;
+        font: string;
+    };
     selected?: boolean;
-    // Add any additional properties specific to widgets
+    selectedStream?: string;
 }
 
 export class DesignStore {
@@ -58,6 +62,20 @@ export class DesignStore {
         const widget = this.widgets.find((w) => w.id === id);
         if (widget) {
             widget.label = label;
+        }
+    }
+
+    updateWidgetColor(id: string, color: string) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget) {
+            widget.style.color = color;
+        }
+    }
+
+    updateWidgetFont(id: string, font: string) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget) {
+            widget.style.font = font;
         }
     }
 
@@ -126,13 +144,22 @@ export class DesignStore {
     }
 
     hydrate(json: string) {
+        console.log(json)
         const data = JSON.parse(json);
         this.widgets = data.widgets || [];
-
+        console.log(data.widgets)
+        console.log(this.widgets)
         // Recalculate the next widget ID to avoid collisions
         const ids = this.widgets.map(w => parseInt(w.id.split('_')[1])).filter(n => !isNaN(n));
         const maxId = ids.length ? Math.max(...ids) : 0;
         this.nextWidgetId = maxId + 1;
+    }
+
+    updateWidgetStream(id: string, stream: string) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget) {
+            widget.selectedStream = stream;
+        }
     }
 
     // Add more methods as needed, similar to FlowStore

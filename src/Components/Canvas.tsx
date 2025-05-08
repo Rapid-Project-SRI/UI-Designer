@@ -10,10 +10,12 @@ import ReactFlow, {
     Edge,
     useReactFlow
 } from 'react-flow-renderer';
-import { designStore, WidgetType } from '../DesignStore';
-import { nodeTypes } from '../nodes/CustomNodes';
-import { widgetTypes } from '../WidgetTypes';
-import './Canvas.css';
+import { designStore, WidgetType } from '../storage/DesignStore';
+import { widgetTypes } from '../types/WidgetTypes';
+import '../styles/Canvas.css';
+import PropertiesPopup from './PropertiesPopup';
+import { simulationStore } from '../storage/SimulationStore';
+
 const Canvas = observer(() => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
@@ -21,6 +23,8 @@ const Canvas = observer(() => {
     const canvasRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [hasFocus, setHasFocus] = useState(false);
+    const [showPropertiesPopup, setShowPropertiesPopup] = useState(false);
+    const [popupPosition, setPopupPosition] = useState<{ x: number, y: number } | null>(null);
 
     const rebuildReactFlowState = () => {
         setNodes(
@@ -95,6 +99,8 @@ const Canvas = observer(() => {
             try {
                 const json = event.target?.result as string;
                 // Implement hydrate logic for widgets
+                console.log("loading new JSON")
+                designStore.hydrate(json);
                 rebuildReactFlowState();
             } catch (err) {
                 console.error("Failed to load JSON:", err);
@@ -105,12 +111,31 @@ const Canvas = observer(() => {
     };
 
     const downloadJson = () => {
-        const json = JSON.stringify(designStore.widgets);
+        const json = designStore.serialize();
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'widgets.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const downloadRAPIDSimJson = () => {
+        const designJson = JSON.parse(designStore.serialize());
+        const simJson = JSON.parse(simulationStore.serialize());
+        const combinedJson = {
+            widgets: designJson.widgets,
+            nodes: simJson.nodes,
+            edges: simJson.edges
+        };
+        const blob = new Blob([JSON.stringify(combinedJson)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'rapid_simulation.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -137,10 +162,32 @@ const Canvas = observer(() => {
         designStore.saveHistory();
     };
 
+    const onNodeDragStop = (e: React.MouseEvent, node: Node) => {
+        designStore.updateWidgetPosition(node.id, node.position)
+        designStore.saveHistory();
+    }
+
     const addWidget = (type: WidgetType, position: { x: number, y: number }) => {
         const id = designStore.generateWidgetId();
         const label = `${type}_${id}`;
-        designStore.addWidget({ id, type, label, position });
+        designStore.addWidget({ id, type, label, position, style: { color: '', font: ''} });
+    };
+
+    const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
+        event.preventDefault();
+        designStore.setSelectedWidgets([node.id]);
+        setShowPropertiesPopup(true);
+        setPopupPosition({ x: event.clientX, y: event.clientY });
+    };
+
+    const handleCanvasClick = () => {
+        canvasRef.current?.focus();
+        designStore.setSelectedWidgets([]);
+        setShowPropertiesPopup(false);
+    };
+
+    const handleCanvasInteractionStart = () => {
+        setShowPropertiesPopup(false);
     };
 
     return (
@@ -148,7 +195,6 @@ const Canvas = observer(() => {
             ref={canvasRef}
             tabIndex={0}
             onKeyDown={handleKeyDown}
-            onClick={() => canvasRef.current?.focus()}
             style={{ width: '100%', height: '100vh', outline: 'none' }}
             onDrop={onDrop}
             onDragOver={onDragOver}
@@ -156,6 +202,7 @@ const Canvas = observer(() => {
             <div style={{ padding: 10 }}>
                 <button onClick={downloadJson}>Download JSON</button>
                 <button onClick={uploadJson} style={{ marginLeft: 8 }}>Upload JSON</button>
+                <button onClick={downloadRAPIDSimJson} style={{ marginLeft: 8 }}>Download RAPID Simulation</button>
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -168,16 +215,36 @@ const Canvas = observer(() => {
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
+                onNodesChange={(changes) => {
+                    onNodesChange(changes);
+                    handleCanvasInteractionStart();
+                }}
+                onEdgesChange={(changes) => {
+                    onEdgesChange(changes);
+                    handleCanvasInteractionStart();
+                }}
                 nodeTypes={widgetTypes}
-                // Assuming widgets don't have connections, but if they do, handle them similarly
+                onSelectionChange={({ nodes }) => {
+                    designStore.setSelectedWidgets(nodes.map(n => n.id));
+                }}
+                onNodeContextMenu={handleNodeContextMenu}
+                onPaneClick={handleCanvasClick}
+                onPaneScroll={handleCanvasInteractionStart}
+                onPaneContextMenu={handleCanvasInteractionStart}
+                onMove={handleCanvasInteractionStart}
+                onNodeDragStop={onNodeDragStop}
                 fitView
                 panOnScroll
             >
                 <MiniMap />
                 <Background />
             </ReactFlow>
+
+            {showPropertiesPopup && popupPosition && (
+                <div style={{ position: 'absolute', top: popupPosition.y, left: popupPosition.x }}>
+                    <PropertiesPopup title="Widget" />
+                </div>
+            )}
         </div>
     );
 });

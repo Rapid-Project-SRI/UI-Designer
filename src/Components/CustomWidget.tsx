@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
-import './CustomWidget.css';
+import '../styles/CustomWidget.css';
+import { designStore, Widget } from '../storage/DesignStore';
+import { observer } from 'mobx-react-lite';
 
-const CustomWidget = ({ onColorChange, onFontChange }) => {
+interface CustomWidgetProps {
+  selectedWidget: Widget
+}
+
+const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) => {
   const [isColorOpen, setIsColorOpen] = useState(false);
   const [isFontOpen, setIsFontOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState('#ffffff');
-  const [selectedFont, setSelectedFont] = useState(null);
 
   const toggleColorDropdown = () => {
     setIsColorOpen(!isColorOpen);
@@ -18,15 +22,17 @@ const CustomWidget = ({ onColorChange, onFontChange }) => {
     if (isColorOpen) setIsColorOpen(false);
   };
 
-  const handleColorChange = (color) => {
-    setSelectedColor(color);
-    if (onColorChange) onColorChange(color);
+  const handleColorChange = (color: string) => {
+    if (selectedWidget) {
+      designStore.updateWidgetColor(selectedWidget.id, color);
+    }
   };
 
-  const handleFontSelect = (font) => {
-    setSelectedFont(font);
-    if (onFontChange) onFontChange(font);
+  const handleFontSelect = (font: string) => {
     setIsFontOpen(false);
+    if (selectedWidget) {
+      designStore.updateWidgetFont(selectedWidget.id, font);
+    }
   };
 
   const fontOptions = ['Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana'];
@@ -38,17 +44,17 @@ const CustomWidget = ({ onColorChange, onFontChange }) => {
           <span className="dropdown-label">Color</span>
           <span 
             className="color-preview" 
-            style={{ backgroundColor: selectedColor }}
+            style={{ backgroundColor: selectedWidget.style.color }}
           />
           <span className={`arrow ${isColorOpen ? 'up' : 'down'}`} />
         </button>
         {isColorOpen && (
           <div className="dropdown-menu color-menu">
             <HexColorPicker 
-              color={selectedColor} 
+              color={selectedWidget.style.color} 
               onChange={handleColorChange} 
             />
-            <div className="color-value">{selectedColor}</div>
+            <div className="color-value">{selectedWidget.style.color}</div>
           </div>
         )}
       </div>
@@ -56,8 +62,8 @@ const CustomWidget = ({ onColorChange, onFontChange }) => {
       <div className="dropdown">
         <button className="dropdown-toggle" onClick={toggleFontDropdown}>
           <span className="dropdown-label">Font</span>
-          {selectedFont && (
-            <span className="font-preview" style={{ fontFamily: selectedFont }}>Aa</span>
+          {selectedWidget.style.font && (
+            <span className="font-preview" style={{ fontFamily: selectedWidget.style.font }}>Aa</span>
           )}
           <span className={`arrow ${isFontOpen ? 'up' : 'down'}`} />
         </button>
@@ -78,6 +84,6 @@ const CustomWidget = ({ onColorChange, onFontChange }) => {
       </div>
     </div>
   );
-};
+});
 
 export default CustomWidget;

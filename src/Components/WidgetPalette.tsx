@@ -1,5 +1,5 @@
 import React from 'react';
-import { WidgetType } from '../DesignStore';
+import { WidgetType } from '../storage/DesignStore';
 
 function WidgetPalette() {
   // When dragging starts, store the widget type in the dataTransfer object.

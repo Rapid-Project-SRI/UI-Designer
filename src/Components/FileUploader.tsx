@@ -1,45 +1,35 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
-import './FileUploader.css';
+import '../styles/FileUploader.css';
+import { simulationStore } from '../storage/SimulationStore';
 
-const FileUploader = ({ onFileLoad }) => {
-  const handleFile = (file) => {
+const FileUploader: React.FC = () => {
+  const handleFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const jsonData = JSON.parse(e.target.result); // Original file data
+        const jsonData = JSON.parse(e.target?.result as string); // Original file data
         if (!jsonData.nodes) throw new Error("Invalid file structure");
 
-        // Filter nodes for eventNodes and outputNodes
-        const eventNodes = jsonData.nodes.filter((n) => n.type === "eventNode");
-        const outputNodes = jsonData.nodes.filter((n) => n.type === "outputNode");
-
-        // Pass both original and filtered data to onFileLoad
-        onFileLoad({
-          originalFileData: jsonData, // Preserve the original file data
-          fileData: {
-            fileName: file.name,
-            eventNodes,
-            outputNodes,
-          },
-        });
+        // Hydrate the SimulationStore
+        simulationStore.loadSimulation(JSON.stringify(jsonData), file.name);
       } catch (err) {
-        alert("Invalid JSON file: " + err.message);
+        alert("Invalid JSON file: " + (err as Error).message);
       }
     };
     reader.readAsText(file);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = Array.from(e.dataTransfer.files).find((f) => f.name.endsWith(".json"));
     if (file) handleFile(file);
     else alert("Please upload a .json file");
   };
 
-  const handleChange = (e) => {
-    const file = Array.from(e.target.files).find((f) => f.name.endsWith(".json"));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = Array.from(e.target.files || []).find((f) => f.name.endsWith(".json"));
     if (file) handleFile(file);
     else alert("Please upload a .json file");
   };
