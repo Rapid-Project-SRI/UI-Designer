@@ -76,6 +76,7 @@ const Canvas = observer(() => {
         if (e.key === 'Backspace') {
             e.preventDefault();
             // Implement delete logic for selected widgets
+            designStore.deleteSelectedWidgets();
             rebuildReactFlowState();
         }
 
