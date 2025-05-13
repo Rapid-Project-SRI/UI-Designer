@@ -2,6 +2,7 @@ import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import StreamInfo from './StreamInfo';
 
 /**
  * Gauge Widget (Consumer) using react-circular-progressbar
@@ -15,11 +16,12 @@ interface GaugeWidgetProps {
   min?: number;
   max?: number;
   label?: string;
+  widgetId: string;
 }
 
 // Convert the GaugeWidget to a React Flow node component
 const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = ({ data }) => {
-  const { value = 50, min = 0, max = 100, label = 'Gauge' } = data;
+  const { value = 50, min = 0, max = 100, label = 'Gauge', widgetId } = data;
 
   // Normalize value between 0-100 for the progress bar
   const percentage = ((value - min) / (max - min)) * 100;
@@ -38,6 +40,7 @@ const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = ({ data }) => {
         })}
       />
       <div style={{ marginTop: 8, fontSize: 14 }}>{label}</div>
+      {widgetId && <StreamInfo widgetId={data.widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );

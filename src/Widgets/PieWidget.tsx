@@ -1,9 +1,11 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { PieChart } from '@mui/x-charts/PieChart';
+import StreamInfo from './StreamInfo';
 
 interface PieWidgetProps {
   data: { id: number; value: number; label: string }[];
+  widgetId: string;
 }
 
 const PieWidget: React.FC<NodeProps<PieWidgetProps>> = ({ data }) => {
@@ -24,6 +26,7 @@ const PieWidget: React.FC<NodeProps<PieWidgetProps>> = ({ data }) => {
         height={100}
         tooltip={{ trigger: 'none' }}
       />
+      {data.widgetId && <StreamInfo widgetId={data.widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );

@@ -1,13 +1,15 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { BarChart } from '@mui/x-charts/BarChart';
+import StreamInfo from './StreamInfo';
 
 interface BarWidgetProps {
   chartData: { datasets: { data: number[] }[] };
+  widgetId: string;
 }
 
 const BarWidget: React.FC<NodeProps<BarWidgetProps>> = ({ data }) => {
-  const { chartData } = data;
+  const { chartData, widgetId } = data;
 
   if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
     return <p>Loading chart data...</p>;
@@ -29,6 +31,7 @@ const BarWidget: React.FC<NodeProps<BarWidgetProps>> = ({ data }) => {
         height={200}
         tooltip={{ trigger: 'none' }}
       />
+      {widgetId && <StreamInfo widgetId={data.widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );

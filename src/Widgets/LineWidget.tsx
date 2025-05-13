@@ -1,9 +1,11 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { LineChart } from '@mui/x-charts/LineChart';
+import StreamInfo from './StreamInfo';
 
 interface LineWidgetProps {
   chartData: { datasets: { data: number[] }[] };
+  widgetId: string;
 }
 
 const LineWidget: React.FC<NodeProps<LineWidgetProps>> = ({ data }) => {
@@ -26,6 +28,7 @@ const LineWidget: React.FC<NodeProps<LineWidgetProps>> = ({ data }) => {
         width={300}
         tooltip={{ trigger: 'none' }}
       />
+      {data.widgetId && <StreamInfo widgetId={data.widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );
