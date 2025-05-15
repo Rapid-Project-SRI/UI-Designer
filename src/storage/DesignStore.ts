@@ -2,7 +2,7 @@
 import { makeAutoObservable } from 'mobx';
 
 // Define the types of widgets
-export type WidgetType = 'Button' | 'Gauge' | 'Line' | 'Pie' | 'Switch' | 'TextDisplay' | 'Bar';
+export type WidgetType = 'Button' | 'Gauge' | 'Line' | 'Pie' | 'Switch' | 'TextDisplay' | 'Bar' | 'StaticImage';
 
 // Define the widget interface
 export interface Widget {
@@ -13,9 +13,13 @@ export interface Widget {
     style: {
         color: string;
         font: string;
+        width?: number;    // Add width
+        height?: number;   // Add height
+        borderRadius?: number; // Add border radius for shape
     };
     selected?: boolean;
     selectedStream?: string;
+    imageUrl?: string; // For StaticImage widgets
 }
 
 export class DesignStore {
@@ -76,6 +80,28 @@ export class DesignStore {
         const widget = this.widgets.find((w) => w.id === id);
         if (widget) {
             widget.style.font = font;
+        }
+    }
+
+    updateWidgetSize(id: string, width: number, height: number) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget) {
+            widget.style.width = width;
+            widget.style.height = height;
+        }
+    }
+    
+    updateWidgetShape(id: string, borderRadius: number) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget) {
+            widget.style.borderRadius = borderRadius;
+        }
+    }
+
+    updateWidgetImage(id: string, imageUrl: string) {
+        const widget = this.widgets.find((w) => w.id === id);
+        if (widget && widget.type === 'StaticImage') {
+            (widget as any).imageUrl = imageUrl;
         }
     }
 

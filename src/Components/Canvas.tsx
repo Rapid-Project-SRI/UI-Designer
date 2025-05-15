@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'; //{..., useCallback}
 import { observer } from 'mobx-react-lite';
 import ReactFlow, {
     MiniMap,
@@ -171,9 +171,15 @@ const Canvas = observer(() => {
     const addWidget = (type: WidgetType, position: { x: number, y: number }) => {
         const id = designStore.generateWidgetId();
         const label = `${type}_${id}`;
-        designStore.addWidget({ id, type, label, position, style: { color: '', font: ''} });
+        let widget: any = { id, type, label, position, style: { color: '', font: '' } };
+        if (type === 'StaticImage') {
+            // StaticImage does not use color, but supports other customizations
+            widget.style = { font: '', width: 120, height: 120, borderRadius: 8 };
+            widget.imageUrl = undefined; // Placeholder for uploaded image
+        }
+        designStore.addWidget(widget);
     };
-
+    
     const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
         event.preventDefault();
         designStore.setSelectedWidgets([node.id]);

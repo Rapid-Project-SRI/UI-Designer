@@ -2,6 +2,8 @@ import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import Button from '@mui/material/Button';
 import StreamInfo from './StreamInfo';
+import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
+import { observer } from 'mobx-react-lite';
 
 /**
  * MUI Button Widget
@@ -16,19 +18,25 @@ interface ButtonWidgetProps {
   widgetId: string;
 }
 
-const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = ({ data }) => {
-  const { label = 'Button', onClick, variant = 'contained', color = 'primary' } = data;
+const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data }) => {
+  const { onClick, variant = 'contained', widgetId } = data;
+  const { label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ margin: 10, background: 'transparent', paddingRight: 40, border: 'none', display: 'inline-block' }}>
+    <div style={{ margin: 10, background: 'transparent', border: 'none', display: 'inline-block', width, fontFamily: font }}>
       <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
-      <Button variant={variant} color={color as any} onClick={onClick} fullWidth>
+      <Button
+        variant={variant}
+        style={{ backgroundColor: color, fontSize, color: '#222', fontFamily: font }}
+        onClick={onClick}
+        fullWidth
+      >
         {label}
       </Button>
-      {data.widgetId && <StreamInfo widgetId={data.widgetId} />}
+      {widgetId && <StreamInfo widgetId={widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );
-};
+});
 
 export default ButtonWidget;

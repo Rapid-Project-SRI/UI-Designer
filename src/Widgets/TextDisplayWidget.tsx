@@ -2,6 +2,8 @@ import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import Typography from '@mui/material/Typography';
 import StreamInfo from './StreamInfo';
+import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
+import { observer } from 'mobx-react-lite';
 
 /**
  * MUI Text Display Widget (Consumer)
@@ -14,19 +16,20 @@ interface TextDisplayWidgetProps {
   widgetId: string;
 }
 
-const TextDisplayWidget: React.FC<NodeProps<TextDisplayWidgetProps>> = ({ data }) => {
-  const { text = 'Text', variant = 'body1' } = data;
+const TextDisplayWidget: React.FC<NodeProps<TextDisplayWidgetProps>> = observer(({ data }) => {
+  const { text = '', variant = 'body1', widgetId } = data;
+  const { label, font, width, fontSize } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ margin: 10, background: 'transparent', paddingRight: 40, border: 'none', display: 'inline-block' }}>
+    <div style={{ margin: 10, background: 'transparent', border: 'none', display: 'inline-block', width, fontFamily: font }}>
       <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
-      <Typography variant={variant} gutterBottom>
-        {text}
+      <Typography variant={variant} gutterBottom style={{ fontSize, color: '#222', fontFamily: font }}>
+        {label || text}
       </Typography>
-      {data.widgetId && <StreamInfo widgetId={data.widgetId} />}
+      {widgetId && <StreamInfo widgetId={widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
   );
-};
+});
 
 export default TextDisplayWidget;

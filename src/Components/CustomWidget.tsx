@@ -11,6 +11,8 @@ interface CustomWidgetProps {
 const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) => {
   const [isColorOpen, setIsColorOpen] = useState(false);
   const [isFontOpen, setIsFontOpen] = useState(false);
+  const [labelText, setLabelText] = useState(selectedWidget.label);
+  const [sizeInput, setSizeInput] = useState(selectedWidget.style.width || 80);
 
   const toggleColorDropdown = () => {
     setIsColorOpen(!isColorOpen);
@@ -37,41 +39,50 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
 
   const fontOptions = ['Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana'];
 
+  // Proportional scaling
+  const handleApplySize = () => {
+    if (selectedWidget) {
+      const aspectRatio = (selectedWidget.style.height || 80) / (selectedWidget.style.width || 80);
+      const newWidth = Number(sizeInput);
+      const newHeight = Math.round(newWidth * aspectRatio);
+      designStore.updateWidgetSize(selectedWidget.id, newWidth, newHeight);
+    }
+  };
+
+  const handleLabelChange = (newLabel: string) => {
+    if (selectedWidget) {
+      designStore.updateWidgetLabel(selectedWidget.id, newLabel);
+    }
+  };
+
+  const isStaticImage = selectedWidget.type === 'StaticImage';
+
   return (
-    <div className="custom-widget">
-      <div className="dropdown">
-        <button className="dropdown-toggle" onClick={toggleColorDropdown}>
-          <span className="dropdown-label">Color</span>
-          <span 
-            className="color-preview" 
-            style={{ backgroundColor: selectedWidget.style.color }}
-          />
-          <span className={`arrow ${isColorOpen ? 'up' : 'down'}`} />
-        </button>
-        {isColorOpen && (
-          <div className="dropdown-menu color-menu">
-            <HexColorPicker 
-              color={selectedWidget.style.color} 
-              onChange={handleColorChange} 
-            />
-            <div className="color-value">{selectedWidget.style.color}</div>
-          </div>
-        )}
+    <div className="custom-widget" style={{ overflow: 'visible', maxHeight: 'none' }}>
+      <div className="property-group">
+        <label>Label</label>
+        <input
+          type="text"
+          value={labelText}
+          onChange={(e) => {
+            setLabelText(e.target.value);
+            handleLabelChange(e.target.value);
+          }}
+          className="label-input"
+        />
       </div>
 
-      <div className="dropdown">
-        <button className="dropdown-toggle" onClick={toggleFontDropdown}>
-          <span className="dropdown-label">Font</span>
-          {selectedWidget.style.font && (
-            <span className="font-preview" style={{ fontFamily: selectedWidget.style.font }}>Aa</span>
-          )}
-          <span className={`arrow ${isFontOpen ? 'up' : 'down'}`} />
-        </button>
+      <div className="property-group">
+        <label>Font</label>
+        <div className="dropdown-toggle" onClick={toggleFontDropdown}>
+          {selectedWidget.style.font || 'Select Font'}
+          <span className={`arrow ${isFontOpen ? 'up' : 'down'}`}></span>
+        </div>
         {isFontOpen && (
-          <div className="dropdown-menu font-menu">
-            {fontOptions.map((font, index) => (
+          <div className="font-menu">
+            {fontOptions.map((font) => (
               <div
-                key={index}
+                key={font}
                 className="font-option"
                 style={{ fontFamily: font }}
                 onClick={() => handleFontSelect(font)}
@@ -81,6 +92,40 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
             ))}
           </div>
         )}
+      </div>
+
+      {/* Color customization is disabled for StaticImage widgets */}
+      {!isStaticImage && (
+        <div className="property-group">
+          <label>Color</label>
+          <div className="dropdown-toggle" onClick={toggleColorDropdown}>
+            <span className="color-preview" style={{ backgroundColor: selectedWidget.style.color }}></span>
+            {selectedWidget.style.color || 'Select Color'}
+            <span className={`arrow ${isColorOpen ? 'up' : 'down'}`}></span>
+          </div>
+          {isColorOpen && (
+            <div style={{ padding: 10 }}>
+              <HexColorPicker color={selectedWidget.style.color} onChange={handleColorChange} />
+              <div className="color-value">{selectedWidget.style.color}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Size Control */}
+      <div className="property-group">
+        <label>Size</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input
+            type="number"
+            value={sizeInput}
+            onChange={(e) => setSizeInput(Number(e.target.value))}
+            placeholder="Size"
+            min={10}
+            style={{ width: 60 }}
+          />
+          <button onClick={handleApplySize} style={{ padding: '2px 8px', fontSize: 12 }}>Enter</button>
+        </div>
       </div>
     </div>
   );

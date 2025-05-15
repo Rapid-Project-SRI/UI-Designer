@@ -4,6 +4,7 @@ import { WidgetType } from '../storage/DesignStore';
 function WidgetPalette() {
   const [isInteractiveOpen, setIsInteractiveOpen] = useState(false);
   const [isDisplayDataOpen, setIsDisplayDataOpen] = useState(false);
+  const [isStaticOpen, setIsStaticOpen] = useState(false);
 
   // When dragging starts, store the widget type in the dataTransfer object.
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, widgetType: WidgetType) => {
@@ -79,6 +80,24 @@ function WidgetPalette() {
               draggable
             >
               Bar Widget
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Static Dropdown */}
+      <div>
+        <button onClick={() => setIsStaticOpen(!isStaticOpen)} style={{ width: '100%', textAlign: 'left' }}>
+          Static {isStaticOpen ? '▲' : '▼'}
+        </button>
+        {isStaticOpen && (
+          <div style={{ paddingLeft: 10 }}>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'StaticImage')}
+              draggable
+            >
+              Static Image Widget
             </div>
           </div>
         )}

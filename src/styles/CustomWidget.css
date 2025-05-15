@@ -125,3 +125,44 @@
 .font-option:hover {
   background-color: #f0f0f0;
 }
+
+.property-group {
+  margin-bottom: 15px;
+}
+
+.property-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #666;
+}
+
+.label-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.size-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.size-controls input {
+  width: 80px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.shape-slider {
+  width: 100%;
+  margin: 5px 0;
+}
+
+.shape-value {
+  font-size: 12px;
+  color: #666;
+  margin-left: 5px;
+}
