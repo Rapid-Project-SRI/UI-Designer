@@ -55,6 +55,13 @@ function WidgetPalette() {
             </div>
             <div
               style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'ProgressBar')}
+              draggable
+            >
+              Progress Bar Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
               onDragStart={(event) => onDragStart(event, 'Line')}
               draggable
             >

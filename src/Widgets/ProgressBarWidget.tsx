@@ -1,0 +1,45 @@
+import React from 'react';
+import { Handle, Position, NodeProps } from 'react-flow-renderer';
+import StreamInfo from './StreamInfo';
+import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
+import { observer } from 'mobx-react-lite';
+import { LinearProgress, Box } from '@mui/material';
+
+interface ProgressBarWidgetProps {
+  value?: number;
+  min?: number;
+  max?: number;
+  label?: string;
+  widgetId: string;
+}
+
+const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(({ data }) => {
+    const { value = 50, min = 0, max = 100, widgetId } = data;
+    const { style, label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
+
+    const percentage = ((value - min) / (max - min)) * 100;
+
+    return (
+        <div
+            style={{ 
+            width,
+            margin: '0 auto',
+            textAlign: 'center',
+            padding: 10,
+            background: 'transparent',
+            border: 'none',
+            borderRadius: style.borderRadius || 5,
+            fontFamily: font,
+            }}
+        >
+            <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+            <Box sx={{ width: '100%' }}>
+                <LinearProgress variant="determinate" value={percentage}/>
+            </Box>
+            {widgetId && <StreamInfo widgetId={widgetId} />}
+            <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+        </div>
+    );
+});
+
+export default ProgressBarWidget;
