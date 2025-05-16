@@ -242,7 +242,7 @@ const Canvas = observer(() => {
                 onMove={handleCanvasInteractionStart}
                 onNodeDragStop={onNodeDragStop}
                 fitView
-                panOnScroll
+                panOnScroll={false}
             >
                 <MiniMap />
                 <Background />
