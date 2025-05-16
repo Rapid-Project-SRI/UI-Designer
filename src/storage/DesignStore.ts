@@ -18,7 +18,7 @@ export interface Widget {
         borderRadius?: number; // Add border radius for shape
     };
     selected?: boolean;
-    selectedStream?: string;
+    selectedStreams?: string[]; // Change to array of strings
     imageUrl?: string; // For StaticImage widgets
 }
 
@@ -90,7 +90,7 @@ export class DesignStore {
             widget.style.height = height;
         }
     }
-    
+
     updateWidgetShape(id: string, borderRadius: number) {
         const widget = this.widgets.find((w) => w.id === id);
         if (widget) {
@@ -184,7 +184,15 @@ export class DesignStore {
     updateWidgetStream(id: string, stream: string) {
         const widget = this.widgets.find((w) => w.id === id);
         if (widget) {
-            widget.selectedStream = stream;
+            if (!widget.selectedStreams) {
+                widget.selectedStreams = [];
+            }
+            const index = widget.selectedStreams.indexOf(stream);
+            if (index === -1) {
+                widget.selectedStreams.push(stream);
+            } else {
+                widget.selectedStreams.splice(index, 1);
+            }
         }
     }
 

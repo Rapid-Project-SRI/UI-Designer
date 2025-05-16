@@ -102,7 +102,7 @@ const Canvas = observer(() => {
                 // Implement hydrate logic for widgets
                 console.log("loading new JSON")
                 designStore.hydrate(json);
-                designStore.widgets.forEach(widget => widget.selectedStream = undefined);
+                designStore.widgets.forEach(widget => widget.selectedStreams = undefined);
                 rebuildReactFlowState();
             } catch (err) {
                 console.error("Failed to load JSON:", err);

@@ -10,13 +10,13 @@ interface StreamSelectorProps {
 }
 
 const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => {
-  const [currentSelectedNode, setCurrentSelectedNode] = useState<string | null>(null);
+  const [currentSelectedNode, setCurrentSelectedNode] = useState<string[]>([]);
 
   useEffect(() => {
     if (designStore.selectedWidgetIds.length > 0) {
       const selectedWidget = designStore.widgets.find(w => w.id === designStore.selectedWidgetIds[0]);
       if (selectedWidget) {
-        setCurrentSelectedNode(selectedWidget.selectedStream || null);
+        setCurrentSelectedNode(selectedWidget.selectedStreams || []);
       }
     }
   }, [designStore.selectedWidgetIds]);
@@ -25,7 +25,10 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
     if (designStore.selectedWidgetIds.length > 0) {
       const selectedWidgetId = designStore.selectedWidgetIds[0];
       designStore.updateWidgetStream(selectedWidgetId, node.id);
-      setCurrentSelectedNode(node.id);
+      const selectedWidget = designStore.widgets.find(w => w.id === selectedWidgetId);
+      if (selectedWidget) {
+        setCurrentSelectedNode(selectedWidget.selectedStreams || []);
+      }
     }
   };
 
@@ -49,12 +52,12 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
           <div>
             <div className="file-name-bar">
               <span>{simulationStore.fileName}</span>
-              <button className="clear-button" onClick={() => setCurrentSelectedNode(null)}>✕</button>
+              <button className="clear-button" onClick={() => setCurrentSelectedNode([])}>✕</button>
             </div>
 
             {displayStreams.map((node: any) => (
               <div
-                className={`node-box output ${currentSelectedNode === node.id ? 'selected' : ''}`}
+                className={`node-box output ${currentSelectedNode.includes(node.id) ? 'selected' : ''}`}
                 key={node.id}
                 onClick={() => handleNodeClick(node)}
               >
@@ -69,7 +72,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
 
             {interactionStreams.map((node: any) => (
               <div
-                className={`node-box input ${currentSelectedNode === node.id ? 'selected' : ''}`}
+                className={`node-box input ${currentSelectedNode.includes(node.id) ? 'selected' : ''}`}
                 key={node.id}
                 onClick={() => handleNodeClick(node)}
               >
