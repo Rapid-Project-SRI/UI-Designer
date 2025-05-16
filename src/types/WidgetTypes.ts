@@ -7,6 +7,7 @@ import TextDisplayWidget from '../Widgets/TextDisplayWidget';
 import BarWidget from '../Widgets/BarWidget';
 import StaticImageWidget from '../Widgets/StaticImageWidget';
 import ProgressBarWidget from '../Widgets/ProgressBarWidget';
+import TextBoxWidget from '../Widgets/TextBoxWidget';
 
 // maps widget types to their corresponding components
 export const widgetTypes = {
@@ -17,6 +18,7 @@ export const widgetTypes = {
     Pie: PieWidget,
     Switch: SwitchWidget,
     TextDisplay: TextDisplayWidget,
+    TextBox: TextBoxWidget,
     Bar: BarWidget,
     StaticImage: StaticImageWidget
 };
