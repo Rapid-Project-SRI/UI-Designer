@@ -102,6 +102,7 @@ const Canvas = observer(() => {
                 // Implement hydrate logic for widgets
                 console.log("loading new JSON")
                 designStore.hydrate(json);
+                designStore.widgets.forEach(widget => widget.selectedStream = undefined);
                 rebuildReactFlowState();
             } catch (err) {
                 console.error("Failed to load JSON:", err);
@@ -179,7 +180,7 @@ const Canvas = observer(() => {
         }
         designStore.addWidget(widget);
     };
-    
+
     const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
         event.preventDefault();
         designStore.setSelectedWidgets([node.id]);
