@@ -2,7 +2,7 @@
 import { makeAutoObservable } from 'mobx';
 
 // Define the types of widgets
-export type WidgetType = 'Button' | 'Gauge' | 'ProgressBar' | 'Line' | 'Pie' | 'Switch' | 'TextDisplay' | 'Bar' | 'StaticImage';
+export type WidgetType = 'Button' | 'Gauge' | 'ProgressBar' | 'Line' | 'Pie' | 'Switch' | 'TextDisplay' | 'TextBox' | 'Bar' | 'StaticImage';
 
 // Define the widget interface
 export interface Widget {

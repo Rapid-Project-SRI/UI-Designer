@@ -83,6 +83,13 @@ function WidgetPalette() {
             </div>
             <div
               style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
+              onDragStart={(event) => onDragStart(event, 'TextBox')}
+              draggable
+            >
+              Text Box Widget
+            </div>
+            <div
+              style={{ marginBottom: 5, padding: 8, background: '#ddd', cursor: 'grab' }}
               onDragStart={(event) => onDragStart(event, 'Bar')}
               draggable
             >
