@@ -125,6 +125,10 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
             style={{ width: 60 }}
           />
           <button onClick={handleApplySize} style={{ padding: '2px 8px', fontSize: 12 }}>Enter</button>
+
+           {/* Delete button */}
+          <button onClick={() => designStore.deleteWidget(selectedWidget.id)}
+            style={{padding: '2px 8px', fontSize: 12}}>Delete</button>
         </div>
       </div>
     </div>
