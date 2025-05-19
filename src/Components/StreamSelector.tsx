@@ -67,6 +67,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>
                 <p><strong>Variable Name:</strong> {node.variableName}</p>
+                <p><strong>Description:</strong> {node.description}</p>
               </div>
             ))}
 
@@ -82,6 +83,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
                 </div>
                 <p><strong>Label:</strong> {node.label}</p>
                 <p><strong>Variable Name:</strong> {node.variableName}</p>
+                <p><strong>Description:</strong> {node.description}</p>
               </div>
             ))}
           </div>
