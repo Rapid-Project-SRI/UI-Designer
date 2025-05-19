@@ -44,7 +44,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
         <button className="close-button" onClick={onClose}>×</button>
       </div>
 
-      <div className="sidebar-content">
+      <div className="sidebar-content" style={{overflowY: 'auto'}}>
         {selectedWidget && <h4>Selected Widget: {selectedWidget.label}</h4>}
         {!simulationStore.fileName ? (
           <FileUploader />

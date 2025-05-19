@@ -36,6 +36,14 @@ const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(
             <Box sx={{ width: '100%' }}>
                 <LinearProgress variant="determinate" value={percentage}/>
             </Box>
+            <div style={{
+                marginTop: 8,
+                fontSize,
+                color: '#222',
+                fontFamily: font,
+            }}>
+                {label}
+            </div>
             {widgetId && <StreamInfo widgetId={widgetId} />}
             <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
         </div>
