@@ -20,11 +20,11 @@ interface ButtonWidgetProps {
 
 const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data }) => {
   const { onClick, variant = 'contained', widgetId } = data;
-  const { label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
+  const { label, font, width, height, fontSize, color } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ margin: 10, background: 'transparent', border: 'none', display: 'inline-block', width, fontFamily: font }}>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+    <div style={{ width, height: 40, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <Button
         variant={variant}
         style={{ backgroundColor: color, fontSize, color: '#222', fontFamily: font }}
@@ -34,7 +34,7 @@ const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data })
         {label}
       </Button>
       {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
   );
 });

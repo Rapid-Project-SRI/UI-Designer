@@ -21,8 +21,8 @@ const LineWidget: React.FC<NodeProps<LineWidgetProps>> = observer(({ data }) => 
   const dataset = chartData.datasets[0].data.map((y, idx) => ({ x: idx + 1, y }));
 
   return (
-    <div style={{ margin: 10, background: 'transparent', border: 'none', width, fontFamily: font }}>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+    <div style={{ width, height: 120, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <div style={{ fontSize, color: '#222', fontFamily: font, marginBottom: 4 }}>{label}</div>
       <LineChart
         dataset={dataset}
@@ -33,7 +33,7 @@ const LineWidget: React.FC<NodeProps<LineWidgetProps>> = observer(({ data }) => 
         tooltip={{ trigger: 'none' }}
       />
       {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
   );
 });

@@ -23,14 +23,14 @@ const SwitchWidget: React.FC<NodeProps<SwitchWidgetProps>> = observer(({ data })
   const { label: widgetLabel, font, width, fontSize } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ margin: 10, background: 'transparent', border: 'none', display: 'inline-block', width, fontFamily: font }}>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+    <div style={{ width, height: 40, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <FormControlLabel
         control={<Switch checked={checked} onChange={onChange} />}
         label={<span style={{ fontSize, fontFamily: font, color: '#222' }}>{widgetLabel}</span>}
       />
       {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
   );
 });

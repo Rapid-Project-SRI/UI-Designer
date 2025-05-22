@@ -24,8 +24,8 @@ const BarWidget: React.FC<NodeProps<BarWidgetProps>> = observer(({ data }) => {
   }));
 
   return (
-    <div style={{ margin: 10, background: 'transparent', border: 'none', width, fontFamily: font }}>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+    <div style={{ width, height: 120, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <div style={{ fontSize, color: '#222', fontFamily: font, marginBottom: 4 }}>{label}</div>
       <BarChart
         dataset={dataset}
@@ -36,7 +36,7 @@ const BarWidget: React.FC<NodeProps<BarWidgetProps>> = observer(({ data }) => {
         tooltip={{ trigger: 'none' }}
       />
       {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
   );
 });
