@@ -294,6 +294,14 @@ const Canvas = observer(() => {
         return edges;
     }
 
+    // Helper: Signature for all widgets' selectedStreams (for effect deps)
+    function getSelectedStreamsSignature() {
+        return designStore.widgets
+            .map(w => `${w.id}:${(w.selectedStreams||[]).join(',')}`)
+            .sort()
+            .join('|');
+    }
+
     // 4. Toggle and Effect
     useEffect(() => {
         if (visualizerMode) {
@@ -306,8 +314,8 @@ const Canvas = observer(() => {
             // Normal mode: no visualizer edges
             rebuildReactFlowState();
         }
-
-    }, [visualizerMode, designStore.widgets.length, simulationStore.nodes.length, simulationStore.edges.length]);
+    // Add selectedStreamsSignature to dependencies
+    }, [visualizerMode, designStore.widgets.length, getSelectedStreamsSignature(), simulationStore.nodes.length, simulationStore.edges.length]);
 
     return (
         <div
