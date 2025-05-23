@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
+import { WidgetCard } from '../Components/WidgetCard';
 
 /**
  * MUI Button Widget
@@ -23,19 +24,23 @@ const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data })
   const { label, font, width, height, fontSize, color } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ width, height: 40, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
-      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-      <Button
+    <WidgetCard header={label}>
+      <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
+      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+      <div className='m-3'>
+        <Button
+        className='rounded-lg'
         variant={variant}
-        style={{ backgroundColor: color, fontSize, color: '#222', fontFamily: font }}
+        style={{ backgroundColor: color, fontSize, fontFamily: font }}
         onClick={onClick}
-        fullWidth
       >
-        {label}
+        Button
       </Button>
+      </div>
       {widgetId && <StreamInfo widgetId={widgetId} />}
       <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
+    </WidgetCard >
   );
 });
 

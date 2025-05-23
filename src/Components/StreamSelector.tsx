@@ -4,6 +4,7 @@ import { designStore } from '../storage/DesignStore';
 import { simulationStore } from '../storage/SimulationStore';
 import FileUploader from './FileUploader';
 import { getGroupedStreams } from '../utils/AdjacencyListUtils';
+import { IoIosClose } from "react-icons/io";
 import '../styles/StreamSelector.css';
 
 interface StreamSelectorProps {
@@ -50,13 +51,13 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
   const { groupedStreams, orphanedEventStreams } = getGroupedStreams();
 
   return (
-    <div className="widget-panel-sidebar">
-      <div className="sidebar-header">
-        <h3>Connect stream</h3>
-        <button className="close-button" onClick={onClose}>×</button>
+    <div className="p-2 flex flex-col min-w-full bg-primary gap-2 h-full overflow-y-auto">
+      <div className='flex justify-between items-center'>
+        <h2 className='font-bold'>Connect stream</h2>
+        <button onClick={onClose}><IoIosClose size={25}/></button>
       </div>
 
-      <div className="sidebar-content" style={{overflowY: 'auto'}}>
+      <div className="sidebar-content" style={{ overflowY: 'auto' }}>
         {selectedWidget && <h4>Selected Widget: {selectedWidget.label}</h4>}
         {!simulationStore.fileName ? (
           <FileUploader />

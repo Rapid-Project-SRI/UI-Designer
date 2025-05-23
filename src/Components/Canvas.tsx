@@ -10,15 +10,15 @@ import ReactFlow, {
     Edge
 } from 'react-flow-renderer';
 import { designStore, WidgetType } from '../storage/DesignStore';
-import { simulationStore } from '../storage/SimulationStore';
 import { widgetTypes } from '../types/WidgetTypes';
 import '../styles/Canvas.css';
+import { IoMdDownload } from "react-icons/io";
 import PropertiesPopup from './PropertiesPopup';
 import { simulationStore } from '../storage/SimulationStore';
 import BorderOverlay from './BorderOverlay';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import InfoIcon from './InfoIcon';
+import { IoInformationCircleOutline } from "react-icons/io5";
 import { buildNodeAdjacencyList, buildWidgetAdjacencyList } from '../utils/AdjacencyListUtils';
 
 const Canvas = observer(() => {
@@ -46,7 +46,7 @@ const Canvas = observer(() => {
         setEdges([]);
     };
 
-    useEffect(() => { 
+    useEffect(() => {
         rebuildReactFlowState();
     }, [designStore.widgets.length]);
 
@@ -204,7 +204,7 @@ const Canvas = observer(() => {
         designStore.updateWidgetPosition(node.id, node.position);
         designStore.saveHistory();
     };
-    
+
 
     const addWidget = (type: WidgetType, position: { x: number, y: number }) => {
         const id = designStore.generateWidgetId();
@@ -220,18 +220,20 @@ const Canvas = observer(() => {
     const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
         event.preventDefault();
         designStore.setSelectedWidgets([node.id]);
-    
+
         if (!canvasRef.current) return;
         const canvasBounds = canvasRef.current.getBoundingClientRect();
-    
+
         // Position relativ zum Canvas
         const x = event.clientX - canvasBounds.left;
         const y = event.clientY - canvasBounds.top;
-    
+
         setPopupPosition({ x, y });
         setShowPropertiesPopup(true);
+        setPopupPosition({ x: event.clientX, y: event.clientY });
+        console.log("Node context menu", node.id);
     };
-    
+
 
     const handleCanvasClick = () => {
         canvasRef.current?.focus();
@@ -264,7 +266,7 @@ const Canvas = observer(() => {
     // Helper: Signature for all widgets' selectedStreams (for effect deps)
     function getSelectedStreamsSignature() {
         return designStore.widgets
-            .map(w => `${w.id}:${(w.selectedStreams||[]).join(',')}`)
+            .map(w => `${w.id}:${(w.selectedStreams || []).join(',')}`)
             .sort()
             .join('|');
     }
@@ -281,7 +283,7 @@ const Canvas = observer(() => {
             // Normal mode: no visualizer edges
             rebuildReactFlowState();
         }
-    // Add selectedStreamsSignature to dependencies
+        // Add selectedStreamsSignature to dependencies
     }, [visualizerMode, designStore.widgets.length, getSelectedStreamsSignature(), simulationStore.nodes.length, simulationStore.edges.length]);
 
     return (
@@ -289,31 +291,82 @@ const Canvas = observer(() => {
             ref={canvasRef}
             tabIndex={0}
             onKeyDown={handleKeyDown}
+            className='flex flex-col h-full'
             style={{
-                width: '100%',
-                height: '100vh',
-                outline: 'none',
-                position: 'relative',
                 cursor: isDropInvalid ? 'not-allowed' : (drawingRectangle ? 'crosshair' : 'default'),
             }}
             onDrop={onDrop}
             onDragOver={onDragOver}
         >
-            <div style={{ padding: 10, display: 'flex', alignItems: 'center', gap: 16 }}>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={visualizerMode}
-                            onChange={() => setVisualizerMode(v => !v)}
-                            color="primary"
+            <div className="flex flex-grow flex-col border-2 border-primary border-dashed rounded-app mx-2 p-2 bg-primary">
+                <div className='flex justify-between items-center'>
+                    <h1 className='mb-2'>Workspace</h1>
+                    <div className='flex items-center gap-2'>
+                        <FormControlLabel
+                            label={visualizerMode ? 'Connection Visualizer' : 'Layout Editor'}
+                            control={
+                                <Switch
+                                    checked={visualizerMode}
+                                    onChange={() => setVisualizerMode(v => !v)}
+                                    color="primary"
+                                />
+                            }
                         />
-                    }
-                    label={visualizerMode ? 'Connection Visualizer' : 'Layout Editor'}
-                />
-                <button onClick={downloadJson}>Download JSON</button>
-                <button onClick={uploadJson} style={{ marginLeft: 8 }}>Upload JSON</button>
-                <button onClick={downloadRAPIDSimJson} style={{ marginLeft: 8 }}>Download RAPID Simulation</button>
-                <InfoIcon />
+                        <IoInformationCircleOutline size={25} color='var(--color-primary)' />
+                    </div>
+                </div>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    nodeTypes={widgetTypes}
+                    onSelectionChange={({ nodes }) => {
+                        designStore.setSelectedWidgets(nodes.map(n => n.id));
+                    }}
+                    onNodeContextMenu={handleNodeContextMenu}
+                    onPaneClick={handleCanvasClick}
+                    onPaneScroll={handleCanvasInteractionStart}
+                    onPaneContextMenu={handleCanvasInteractionStart}
+                    onMove={handleCanvasInteractionStart}
+                    onNodeDragStop={onNodeDragStop}
+                    fitView
+                    panOnScroll={false}
+                    zoomOnScroll={false}
+                    zoomOnPinch={false}
+                    zoomOnDoubleClick={false}
+                    panOnDrag={false}
+                >
+                    <MiniMap />
+                    <Background />
+                </ReactFlow>
+                <BorderOverlay />
+                {designStore.placementBounds && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: designStore.placementBounds.x,
+                            top: designStore.placementBounds.y,
+                            width: designStore.placementBounds.width,
+                            height: designStore.placementBounds.height,
+                            border: '2px dashed red',
+                            pointerEvents: 'none',
+                            zIndex: 5
+                        }}
+                    />
+                )}
+            </div>
+
+            {showPropertiesPopup && popupPosition && (
+                <div style={{ position: 'absolute', top: popupPosition.y, left: popupPosition.x }}>
+                    <PropertiesPopup title="Widget" />
+                </div>
+            )}
+
+            <div className="my-5 p-2 flex gap-2 justify-between">
+                <button onClick={uploadJson} className="flex btn-primary">Upload JSON </button>
+                <button onClick={downloadJson} className="btn-navy flex gap-3">Download JSON file</button>
+                <button onClick={downloadRAPIDSimJson} className="btn-navy flex gap-3">Download RAPID Simulation</button>
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -322,52 +375,6 @@ const Canvas = observer(() => {
                     style={{ display: 'none' }}
                 />
             </div>
-
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                nodeTypes={widgetTypes}
-                onSelectionChange={({ nodes }) => {
-                    designStore.setSelectedWidgets(nodes.map(n => n.id));
-                }}
-                onNodeContextMenu={handleNodeContextMenu}
-                onPaneClick={handleCanvasClick}
-                onPaneScroll={handleCanvasInteractionStart}
-                onPaneContextMenu={handleCanvasInteractionStart}
-                onMove={handleCanvasInteractionStart}
-                onNodeDragStop={onNodeDragStop}
-                fitView
-                panOnScroll={false}
-                zoomOnScroll={false}
-                zoomOnPinch={false}
-                zoomOnDoubleClick={false}
-                panOnDrag={false}
-            >
-                <MiniMap />
-                <Background />
-            </ReactFlow>
-            <BorderOverlay />
-            {designStore.placementBounds && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: designStore.placementBounds.x,
-                        top: designStore.placementBounds.y,
-                        width: designStore.placementBounds.width,
-                        height: designStore.placementBounds.height,
-                        border: '2px dashed red',
-                        pointerEvents: 'none',
-                        zIndex: 5
-                    }}
-                />
-            )}
-            {showPropertiesPopup && popupPosition && (
-                <div style={{ position: 'absolute', top: popupPosition.y, left: popupPosition.x }}>
-                    <PropertiesPopup title="Widget" />
-                </div>
-            )}
         </div>
     );
 });

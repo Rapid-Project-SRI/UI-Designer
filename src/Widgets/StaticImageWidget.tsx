@@ -3,6 +3,7 @@ import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
 import { designStore } from '../storage/DesignStore';
+import { WidgetCard } from '../Components/WidgetCard';
 
 interface StaticImageWidgetProps {
   imageUrl?: string;
@@ -45,30 +46,31 @@ const StaticImageWidget: React.FC<NodeProps<StaticImageWidgetProps>> = observer(
   };
 
   return (
-    <div
-      style={{ margin: 10, background: 'transparent', border: 'none', width, fontFamily: font, textAlign: 'center', minHeight: 120 }}
-      onDrop={handleDrop}
-      onDragOver={e => e.preventDefault()}
-    >
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
-      <div style={{ fontSize, color: '#222', fontFamily: font, marginBottom: 4 }}>{label}</div>
-      {imageUrl ? (
-        <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: 120, borderRadius: 8 }} />
-      ) : (
-        <div style={{ padding: 16, border: '2px dashed #aaa', borderRadius: 8, cursor: 'pointer', background: '#fafafa' }}
-             onClick={() => fileInputRef.current?.click()}>
-          <div>Drop image here or <span style={{ color: '#1976d2', textDecoration: 'underline' }}>upload</span></div>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
-        </div>
-      )}
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
-    </div>
+    <WidgetCard header={label}>
+      <div
+        style={{ fontFamily: font }} className='flex flex-col items-center gap-2'
+        onDrop={handleDrop}
+        onDragOver={e => e.preventDefault()}
+      >
+        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        {imageUrl ? (
+          <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: 120, borderRadius: 8 }} />
+        ) : (
+          <div style={{ padding: 16, border: '2px dashed #aaa', borderRadius: 8, cursor: 'pointer', background: '#fafafa' }}
+            onClick={() => fileInputRef.current?.click()}>
+            <div>Drop image here or <span style={{ color: '#1976d2', textDecoration: 'underline' }}>upload</span></div>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      </div>
+    </WidgetCard>
   );
 });
 

@@ -4,6 +4,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
+import { WidgetCard } from '../Components/WidgetCard';
 
 interface LineWidgetProps {
   chartData: { datasets: { data: number[] }[] };
@@ -14,27 +15,24 @@ const LineWidget: React.FC<NodeProps<LineWidgetProps>> = observer(({ data }) => 
   const { chartData, widgetId } = data;
   const { label, font, width, fontSize } = useWidgetCustomization(widgetId);
 
-  if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
-    return <p>Loading chart data...</p>;
-  }
-
-  const dataset = chartData.datasets[0].data.map((y, idx) => ({ x: idx + 1, y }));
-
   return (
-    <div style={{ width, height: 120, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
-      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-      <div style={{ fontSize, color: '#222', fontFamily: font, marginBottom: 4 }}>{label}</div>
-      <LineChart
-        dataset={dataset}
-        xAxis={[{ dataKey: 'x' }]}
-        series={[{ dataKey: 'y' }]}
-        height={200}
-        width={width}
-        tooltip={{ trigger: 'none' }}
-      />
-      {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-    </div>
+    <WidgetCard header={label}>
+      <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
+        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        <LineChart
+          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+          series={[
+            {
+              data: [2, 5.5, 2, 8.5, 1.5, 5],
+            },
+          ]}
+          height={300}
+          width={300}
+        />
+        {widgetId && <StreamInfo widgetId={widgetId} />}
+        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      </div>
+    </WidgetCard>
   );
 });
 

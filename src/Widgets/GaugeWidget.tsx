@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
+import { designStore } from '../storage/DesignStore';
+
 import { observer } from 'mobx-react-lite';
+import { WidgetCard } from '../Components/WidgetCard';
+import PropertiesPopup from '../Components/PropertiesPopup';
 
 /**
  * Gauge Widget (Consumer) using react-circular-progressbar
@@ -24,45 +28,31 @@ interface GaugeWidgetProps {
 // Convert the GaugeWidget to a React Flow node component
 const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) => {
   const { value = 50, min = 0, max = 100, widgetId } = data;
-  const { style, label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
+  const { style, label, font, width, fontSize, color } = useWidgetCustomization("widget_1");
 
   // Normalize value between 0-100 for the progress bar
   const percentage = ((value - min) / (max - min)) * 100;
 
   return (
-    <div 
-      style={{ 
-        width,
-        height: style.height,
-        background: 'transparent',
-        border: 'none',
-        borderRadius: style.borderRadius || 5,
-        fontFamily: font,
-        boxSizing: 'border-box',
-      }}
-    >
-      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-      <CircularProgressbar
-        value={percentage}
-        text={`${value}`}
-        styles={buildStyles({
-          textSize: '24px',
-          pathColor: color,
-          textColor: '#222',
-          trailColor: '#eee',
-        })}
-      />
-      <div style={{
-        marginTop: 8,
-        fontSize,
-        color: '#222',
-        fontFamily: font,
-      }}>
-        {label}
+  <WidgetCard header={label}>
+    <div style={{ width }}>
+      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+      <div style={{ font, fontSize }}>
+        <CircularProgressbar
+          value={percentage}
+          text={`${value}`}
+          styles={buildStyles({
+            textSize: '24px',
+            pathColor: color,
+            textColor: '#222',
+            trailColor: '#eee',
+          })}
+        />
+        {widgetId && <StreamInfo widgetId={widgetId} />}
       </div>
-      {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
+      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
     </div>
+    </WidgetCard>
   );
 });
 

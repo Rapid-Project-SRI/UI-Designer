@@ -4,39 +4,48 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
+import { WidgetCard } from '../Components/WidgetCard';
 
 interface PieWidgetProps {
-  data: { id: number; value: number}[];
+  data?: { id: number; value: number }[];
   widgetId: string;
 }
 
+const MOCK_DATA = [
+  { id: 0, value: 40 },
+  { id: 1, value: 30 },
+  { id: 2, value: 30 },
+];
+
 const PieWidget: React.FC<NodeProps<PieWidgetProps>> = observer(({ data }) => {
   const { data: pieData, widgetId } = data;
-  const { label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
+  const { label, font, width = 120, fontSize, color } = useWidgetCustomization(widgetId);
 
-  if (!pieData || !Array.isArray(pieData) || pieData.length === 0) {
-    return <p>Loading chart data...</p>;
-  }
+  // Use mock data if no data is provided or it's empty
+  const chartData = (pieData && Array.isArray(pieData) && pieData.length > 0) ? pieData : MOCK_DATA;
 
   return (
-    <div style={{ width, height: 120, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
-      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-      <div style={{ fontSize, color: '#222', fontFamily: font, marginBottom: 4 }}>{label}</div>
-      <PieChart
-        colors={[color, 'blue', 'yellow']}
-        series={[
-          {
-            arcLabel: (item) => `${item.value}%`,
-            data: pieData,
-          },
-        ]}
-        width={width}
-        height={Math.round(width / 2)}
-        tooltip={{ trigger: 'none' }}
-      />
-      {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-    </div>
+    <WidgetCard header={label}>
+      <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
+        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        <PieChart
+          series={[
+            {
+              data: [
+                { id: 0, value: 10, label: 'series A' },
+                { id: 1, value: 15, label: 'series B' },
+                { id: 2, value: 20, label: 'series C' },
+              ],
+            },
+          ]}
+          width={200}
+          height={100}
+          margin={{ top: 10, right: 120, bottom: 10, left: 10 }}
+        />
+        {widgetId && <StreamInfo widgetId={widgetId} />}
+        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      </div>
+    </WidgetCard>
   );
 });
 

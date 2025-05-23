@@ -5,6 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
+import { WidgetCard } from '../Components/WidgetCard';
 
 /**
  * MUI Switch Widget
@@ -23,15 +24,17 @@ const SwitchWidget: React.FC<NodeProps<SwitchWidgetProps>> = observer(({ data })
   const { label: widgetLabel, font, width, fontSize } = useWidgetCustomization(widgetId);
 
   return (
-    <div style={{ width, height: 40, border: 'none', fontFamily: font, boxSizing: 'border-box' }}>
-      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-      <FormControlLabel
-        control={<Switch checked={checked} onChange={onChange} />}
-        label={<span style={{ fontSize, fontFamily: font, color: '#222' }}>{widgetLabel}</span>}
-      />
-      {widgetId && <StreamInfo widgetId={widgetId} />}
-      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-    </div>
+    <WidgetCard header={widgetLabel}>
+      <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
+        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        <FormControlLabel
+          control={<Switch checked={checked} onChange={onChange} />}
+          label={<p>Switch</p>}
+        />
+        {widgetId && <StreamInfo widgetId={widgetId} />}
+        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      </div>
+    </WidgetCard>
   );
 });
 

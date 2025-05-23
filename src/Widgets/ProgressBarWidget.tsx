@@ -4,13 +4,14 @@ import StreamInfo from './StreamInfo';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
 import { LinearProgress, Box } from '@mui/material';
+import { WidgetCard } from '../Components/WidgetCard';
 
 interface ProgressBarWidgetProps {
-  value?: number;
-  min?: number;
-  max?: number;
-  label?: string;
-  widgetId: string;
+    value?: number;
+    min?: number;
+    max?: number;
+    label?: string;
+    widgetId: string;
 }
 
 const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(({ data }) => {
@@ -20,35 +21,22 @@ const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(
     const percentage = ((value - min) / (max - min)) * 100;
 
     return (
-        <div
-            style={{ 
-            width,
-            height: 60,
-            margin: '0 auto',
-            textAlign: 'center',
-            padding: 10,
-            background: 'transparent',
-            border: 'none',
-            borderRadius: style.borderRadius || 5,
-            fontFamily: font,
-            boxSizing: 'border-box',
-            }}
-        >
-            <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-            <Box sx={{ width: '100%' }}>
-                <LinearProgress variant="determinate" value={percentage}/>
-            </Box>
-            <div style={{
-                marginTop: 8,
-                fontSize,
-                color: '#222',
-                fontFamily: font,
-            }}>
-                {label}
+        <WidgetCard header={label}>
+            <div
+                className='my-2'
+                style={{
+                    width,
+                    fontFamily: font,
+                }}
+            >
+                <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+                <div className='w-full'>
+                    <LinearProgress variant="determinate" value={percentage} />
+                </div>
+                {widgetId && <StreamInfo widgetId={widgetId} />}
+                <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
             </div>
-            {widgetId && <StreamInfo widgetId={widgetId} />}
-            <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-        </div>
+        </WidgetCard>
     );
 });
 

@@ -8,9 +8,9 @@ export function useWidgetCustomization(widgetId: string) {
   const style: Partial<Widget['style']> = widget?.style || {};
   const label = widget?.label || '';
   const font = style.font || 'inherit';
-  const width = style.width || 80;
-  const height = style.height || 80;
-  const color = style.color || '#1976d2';
+  const width = style.width || 200;
+  const height = style.height || 100;
+  const color = style.color || '#6CA9AE';
 
   // Proportional font size
   const baseFontSize = 14;
