@@ -1,5 +1,6 @@
 import * as React from "react";
 import Popover from '@mui/material/Popover';
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 export default function InfoIcon() {
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -21,9 +22,9 @@ export default function InfoIcon() {
             aria-haspopup="true"
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
-            className="bg-blue-400 text-white px-4 py-2 rounded"
+            className="text-white rounded"
         >
-            i
+            <IoInformationCircleOutline size={25} color='var(--color-primary)' />
         </button>
         <Popover
         id="mouse-over-popover"
