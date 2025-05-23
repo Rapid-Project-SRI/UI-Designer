@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { designStore } from '../storage/DesignStore';
 import { simulationStore } from '../storage/SimulationStore';
 import FileUploader from './FileUploader';
+import { getGroupedStreams } from '../utils/AdjacencyListUtils';
 import '../styles/StreamSelector.css';
 
 interface StreamSelectorProps {
@@ -11,6 +12,7 @@ interface StreamSelectorProps {
 
 const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => {
   const [currentSelectedNode, setCurrentSelectedNode] = useState<string[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (designStore.selectedWidgetIds.length > 0) {
@@ -32,10 +34,20 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
     }
   };
 
+  const toggleGroupExpansion = (outputNodeId: string) => {
+    const newExpanded = new Set(expandedGroups);
+    if (newExpanded.has(outputNodeId)) {
+      newExpanded.delete(outputNodeId);
+    } else {
+      newExpanded.add(outputNodeId);
+    }
+    setExpandedGroups(newExpanded);
+  };
+
   const selectedWidget = designStore.widgets.find(w => w.id === designStore.selectedWidgetIds[0]);
 
-  const displayStreams = simulationStore.displayStreams;
-  const interactionStreams = simulationStore.interactionStreams;
+  // Get grouped streams using the adjacency list
+  const { groupedStreams, orphanedEventStreams } = getGroupedStreams();
 
   return (
     <div className="widget-panel-sidebar">
@@ -55,37 +67,86 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
               <button className="clear-button" onClick={() => setCurrentSelectedNode([])}>✕</button>
             </div>
 
-            {displayStreams.map((node: any) => (
-              <div
-                className={`node-box output ${currentSelectedNode.includes(node.id) ? 'selected' : ''}`}
-                key={node.id}
-                onClick={() => handleNodeClick(node)}
-              >
-                <div className="node-header">
-                  <span className="node-icon">D</span>
-                  <span className="node-title">Display Stream</span>
-                </div>
-                <p><strong>Label:</strong> {node.label}</p>
-                <p><strong>Variable Name:</strong> {node.variableName}</p>
-                <p><strong>Description:</strong> {node.description}</p>
-              </div>
-            ))}
+            {/* Grouped Streams Display */}
+            {groupedStreams.map((group) => {
+              const { outputStream, connectedEventStreams } = group;
+              const isExpanded = expandedGroups.has(outputStream.id);
+              const hasConnectedEvents = connectedEventStreams.length > 0;
 
-            {interactionStreams.map((node: any) => (
-              <div
-                className={`node-box input ${currentSelectedNode.includes(node.id) ? 'selected' : ''}`}
-                key={node.id}
-                onClick={() => handleNodeClick(node)}
-              >
-                <div className="node-header">
-                  <span className="node-icon">I</span>
-                  <span className="node-title">Interaction Stream</span>
+              return (
+                <div key={outputStream.id} className="stream-group">
+                  {/* Output Stream - Primary Group */}
+                  <div
+                    className={`node-box output group-header ${currentSelectedNode.includes(outputStream.id) ? 'selected' : ''}`}
+                    onClick={() => handleNodeClick(outputStream)}
+                  >
+                    <div className="node-header">
+                      <span className="node-icon">D</span>
+                      <span className="node-title">Display Stream</span>
+                      {hasConnectedEvents && (
+                        <button
+                          className="expand-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleGroupExpansion(outputStream.id);
+                          }}
+                        >
+                          {isExpanded ? '−' : '+'}
+                        </button>
+                      )}
+                    </div>
+                    <p><strong>Label:</strong> {outputStream.label}</p>
+                    <p><strong>Variable Name:</strong> {outputStream.variableName}</p>
+                    {hasConnectedEvents && (
+                      <p className="connection-info">
+                        <strong>Connected Events:</strong> {connectedEventStreams.length}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Connected Event Streams - Subgroup */}
+                  {hasConnectedEvents && isExpanded && (
+                    <div className="subgroup">
+                      {connectedEventStreams.map((eventStream) => (
+                        <div
+                          key={eventStream.id}
+                          className={`node-box input subgroup-item ${currentSelectedNode.includes(eventStream.id) ? 'selected' : ''}`}
+                          onClick={() => handleNodeClick(eventStream)}
+                        >
+                          <div className="node-header">
+                            <span className="node-icon">I</span>
+                            <span className="node-title">Interaction Stream</span>
+                          </div>
+                          <p><strong>Label:</strong> {eventStream.label}</p>
+                          <p><strong>Variable Name:</strong> {eventStream.variableName}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <p><strong>Label:</strong> {node.label}</p>
-                <p><strong>Variable Name:</strong> {node.variableName}</p>
-                <p><strong>Description:</strong> {node.description}</p>
+              );
+            })}
+
+            {/* Orphaned Event Streams (not connected to any output) */}
+            {orphanedEventStreams.length > 0 && (
+              <div className="orphaned-streams">
+                <h5 className="orphaned-header">Unconnected Interaction Streams</h5>
+                {orphanedEventStreams.map((eventStream) => (
+                  <div
+                    key={eventStream.id}
+                    className={`node-box input ${currentSelectedNode.includes(eventStream.id) ? 'selected' : ''}`}
+                    onClick={() => handleNodeClick(eventStream)}
+                  >
+                    <div className="node-header">
+                      <span className="node-icon">I</span>
+                      <span className="node-title">Interaction Stream</span>
+                    </div>
+                    <p><strong>Label:</strong> {eventStream.label}</p>
+                    <p><strong>Variable Name:</strong> {eventStream.variableName}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

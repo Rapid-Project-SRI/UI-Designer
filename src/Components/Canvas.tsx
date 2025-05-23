@@ -10,11 +10,16 @@ import ReactFlow, {
     Edge
 } from 'react-flow-renderer';
 import { designStore, WidgetType } from '../storage/DesignStore';
+import { simulationStore } from '../storage/SimulationStore';
 import { widgetTypes } from '../types/WidgetTypes';
 import '../styles/Canvas.css';
 import PropertiesPopup from './PropertiesPopup';
 import { simulationStore } from '../storage/SimulationStore';
 import BorderOverlay from './BorderOverlay';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InfoIcon from './InfoIcon';
+import { buildNodeAdjacencyList, buildWidgetAdjacencyList } from '../utils/AdjacencyListUtils';
 
 const Canvas = observer(() => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -27,6 +32,7 @@ const Canvas = observer(() => {
     const [popupPosition, setPopupPosition] = useState<{ x: number, y: number } | null>(null);
     const [drawingRectangle, setDrawingRectangle] = useState(false);
     const [isDropInvalid, setIsDropInvalid] = useState(false);
+    const [visualizerMode, setVisualizerMode] = useState(false);
 
     const rebuildReactFlowState = () => {
         setNodes(
@@ -175,10 +181,10 @@ const Canvas = observer(() => {
         const widgetType = e.dataTransfer.getData('application/reactflow');
         if (!widgetType) return;
 
-        const bounds = (e.target as HTMLDivElement).getBoundingClientRect();
+        // Use React Flow's project() directly for perfect alignment
         const position = project({
-            x: e.clientX - bounds.left - 50,
-            y: e.clientY - bounds.top - 20,
+            x: e.clientX,
+            y: e.clientY,
         });
 
         if (!isWithinBounds(position)) {
@@ -237,6 +243,47 @@ const Canvas = observer(() => {
         setShowPropertiesPopup(false);
     };
 
+    // 3. Generate Visualizer Edges
+    function generateVisualizerEdges(widgetAdj: Record<string, string[]>) {
+        const edges: Edge[] = [];
+        for (const [sourceId, targets] of Object.entries(widgetAdj)) {
+            for (const targetId of targets) {
+                edges.push({
+                    id: `viz-${targetId}-${sourceId}`,
+                    source: targetId,
+                    target: sourceId,
+                    type: 'default',
+                    animated: true,
+                    style: { stroke: '#FF00FF', strokeWidth: 2 }
+                });
+            }
+        }
+        return edges;
+    }
+
+    // Helper: Signature for all widgets' selectedStreams (for effect deps)
+    function getSelectedStreamsSignature() {
+        return designStore.widgets
+            .map(w => `${w.id}:${(w.selectedStreams||[]).join(',')}`)
+            .sort()
+            .join('|');
+    }
+
+    // 4. Toggle and Effect
+    useEffect(() => {
+        if (visualizerMode) {
+            // Build adjacency lists and edges using shared utility functions
+            const nodeAdj = buildNodeAdjacencyList();
+            const widgetAdj = buildWidgetAdjacencyList(nodeAdj);
+            const vizEdges = generateVisualizerEdges(widgetAdj);
+            setEdges(vizEdges);
+        } else {
+            // Normal mode: no visualizer edges
+            rebuildReactFlowState();
+        }
+    // Add selectedStreamsSignature to dependencies
+    }, [visualizerMode, designStore.widgets.length, getSelectedStreamsSignature(), simulationStore.nodes.length, simulationStore.edges.length]);
+
     return (
         <div
             ref={canvasRef}
@@ -252,10 +299,21 @@ const Canvas = observer(() => {
             onDrop={onDrop}
             onDragOver={onDragOver}
         >
-            <div style={{ padding: 10 }}>
+            <div style={{ padding: 10, display: 'flex', alignItems: 'center', gap: 16 }}>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={visualizerMode}
+                            onChange={() => setVisualizerMode(v => !v)}
+                            color="primary"
+                        />
+                    }
+                    label={visualizerMode ? 'Connection Visualizer' : 'Layout Editor'}
+                />
                 <button onClick={downloadJson}>Download JSON</button>
                 <button onClick={uploadJson} style={{ marginLeft: 8 }}>Upload JSON</button>
                 <button onClick={downloadRAPIDSimJson} style={{ marginLeft: 8 }}>Download RAPID Simulation</button>
+                <InfoIcon />
                 <input
                     type="file"
                     ref={fileInputRef}

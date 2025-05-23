@@ -16,7 +16,9 @@
         "moduleResolution": "node", // Use Node.js module resolution strategy
         "resolveJsonModule": true, // Include modules imported with .json extension
         "isolatedModules": true, // Ensure each file can be safely transpiled without relying on other imports
-        "jsx": "react" // Specify JSX code generation
+        "jsx": "react", // Specify JSX code generation
+        "outDir": "build", // Specify output directory for compiled files
+        "noEmit": true // Don't emit compiled files (for type checking only)
     },
     "include": [
         "src"
