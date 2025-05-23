@@ -74,6 +74,7 @@
 }
 
 .color-picker-container input[type="color"] {
+    appearance: none;
     -webkit-appearance: none;
     border: none;
     width: 30px;
@@ -213,4 +214,92 @@
     /* White text for contrast */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     /* Optional: Add a subtle shadow */
+}
+
+/* Stream Grouping Styles */
+.stream-group {
+    margin-bottom: 1rem;
+}
+
+.group-header {
+    position: relative;
+}
+
+.expand-button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.expand-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.subgroup {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid #e0e0e0;
+}
+
+.subgroup-item {
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.subgroup-item::before {
+    content: '└─';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.75rem;
+    color: #888;
+    font-family: monospace;
+}
+
+.connection-info {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.orphaned-streams {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px dashed #ccc;
+}
+
+.orphaned-header {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Enhanced node box styles for grouping */
+.node-box.group-header {
+    border: 2px solid transparent;
+}
+
+.node-box.group-header:hover {
+    border-color: #5f2e91;
+}
+
+.node-box.subgroup-item {
+    background-color: #f8f8f8;
+    margin-left: 0;
+}
+
+.node-box.subgroup-item:hover {
+    background-color: #e8e8e8;
+}
+
+.node-box.subgroup-item.selected {
+    background-color: #b8860b;
+    color: #F8F8F8;
 }

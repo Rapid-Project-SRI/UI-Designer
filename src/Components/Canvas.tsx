@@ -18,6 +18,7 @@ import PropertiesPopup from './PropertiesPopup';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InfoIcon from './InfoIcon';
+import { buildNodeAdjacencyList, buildWidgetAdjacencyList } from '../utils/AdjacencyListUtils';
 
 const Canvas = observer(() => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -202,81 +203,6 @@ const Canvas = observer(() => {
         setShowPropertiesPopup(false);
     };
 
-    // 1. Build Node Adjacency List
-    function buildNodeAdjacencyList() {
-        // outputNodeId -> [eventNodeId, ...]
-        const adjacency: Record<string, string[]> = {};
-        const nodes = simulationStore.nodes;
-        const edges = simulationStore.edges;
-
-        // Find all output nodes
-        const outputNodes = nodes.filter(n => n.type === 'outputNode');
-        const eventNodes = nodes.filter(n => n.type === 'eventNode');
-
-        // For each output node, find all event nodes that can reach it
-        for (const output of outputNodes) {
-            // Traverse backwards from output to find event nodes
-            const visited = new Set<string>();
-            const stack = [output.id];
-            const relatedEvents: string[] = [];
-            while (stack.length) {
-                const current = stack.pop()!;
-                if (visited.has(current)) continue;
-                visited.add(current);
-                const incoming = edges.filter(e => e.target === current).map(e => e.source);
-                for (const src of incoming) {
-                    const srcNode = nodes.find(n => n.id === src);
-                    if (srcNode?.type === 'eventNode') {
-                        relatedEvents.push(srcNode.id);
-                    } else {
-                        stack.push(src);
-                    }
-                }
-            }
-            adjacency[output.id] = relatedEvents;
-        }
-        return adjacency;
-    }
-
-    // 2. Build Widget Adjacency List
-    function buildWidgetAdjacencyList(nodeAdjacency: Record<string, string[]>) {
-        // widgetId -> [adjacentWidgetId, ...]
-        const widgetAdj: Record<string, string[]> = {};
-        const widgets = designStore.widgets;
-
-        // Map nodeId to widgets that reference it
-        const nodeIdToWidgets: Record<string, string[]> = {};
-        for (const widget of widgets) {
-            if (widget.selectedStreams) {
-                for (const nodeId of widget.selectedStreams) {
-                    if (!nodeIdToWidgets[nodeId]) nodeIdToWidgets[nodeId] = [];
-                    nodeIdToWidgets[nodeId].push(widget.id);
-                }
-            }
-        }
-
-        // For each widget, find its output nodes in selectedStreams
-        for (const widget of widgets) {
-            widgetAdj[widget.id] = [];
-            if (!widget.selectedStreams) continue;
-            for (const nodeId of widget.selectedStreams) {
-                // If this node is an output node, get its related event nodes
-                if (nodeAdjacency[nodeId]) {
-                    // For each related event node, find widgets that reference it
-                    for (const eventNodeId of nodeAdjacency[nodeId]) {
-                        const eventWidgets = nodeIdToWidgets[eventNodeId] || [];
-                        for (const eventWidgetId of eventWidgets) {
-                            if (!widgetAdj[widget.id].includes(eventWidgetId)) {
-                                widgetAdj[widget.id].push(eventWidgetId);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return widgetAdj;
-    }
-
     // 3. Generate Visualizer Edges
     function generateVisualizerEdges(widgetAdj: Record<string, string[]>) {
         const edges: Edge[] = [];
@@ -306,7 +232,7 @@ const Canvas = observer(() => {
     // 4. Toggle and Effect
     useEffect(() => {
         if (visualizerMode) {
-            // Build adjacency lists and edges
+            // Build adjacency lists and edges using shared utility functions
             const nodeAdj = buildNodeAdjacencyList();
             const widgetAdj = buildWidgetAdjacencyList(nodeAdj);
             const vizEdges = generateVisualizerEdges(widgetAdj);
