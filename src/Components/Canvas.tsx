@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react'; //{..., useCallback}
+import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import ReactFlow, {
     MiniMap,
     Background,
     useNodesState,
     useEdgesState,
-    Connection,
+    useReactFlow,
     Node,
-    Edge,
-    useReactFlow
+    Edge
 } from 'react-flow-renderer';
 import { designStore, WidgetType } from '../storage/DesignStore';
 import { widgetTypes } from '../types/WidgetTypes';
 import '../styles/Canvas.css';
 import PropertiesPopup from './PropertiesPopup';
 import { simulationStore } from '../storage/SimulationStore';
+import BorderOverlay from './BorderOverlay';
 
 const Canvas = observer(() => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -25,6 +25,8 @@ const Canvas = observer(() => {
     const [hasFocus, setHasFocus] = useState(false);
     const [showPropertiesPopup, setShowPropertiesPopup] = useState(false);
     const [popupPosition, setPopupPosition] = useState<{ x: number, y: number } | null>(null);
+    const [drawingRectangle, setDrawingRectangle] = useState(false);
+    const [isDropInvalid, setIsDropInvalid] = useState(false);
 
     const rebuildReactFlowState = () => {
         setNodes(
@@ -35,11 +37,10 @@ const Canvas = observer(() => {
                 position: widget.position,
             } as Node))
         );
-        // Assuming widgets don't have edges, but if they do, handle them similarly
         setEdges([]);
     };
 
-    useEffect(() => {
+    useEffect(() => { 
         rebuildReactFlowState();
     }, [designStore.widgets.length]);
 
@@ -64,27 +65,34 @@ const Canvas = observer(() => {
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
             e.preventDefault();
-            // Implement copy logic for widgets
         }
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
             e.preventDefault();
-            // Implement paste logic for widgets
             rebuildReactFlowState();
         }
 
         if (e.key === 'Backspace') {
             e.preventDefault();
-            // Implement delete logic for selected widgets
             designStore.deleteSelectedWidgets();
             rebuildReactFlowState();
         }
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
             e.preventDefault();
-            // Implement undo/redo logic if needed
             rebuildReactFlowState();
         }
+    };
+
+    const isWithinBounds = (position: { x: number; y: number }) => {
+        const bounds = designStore.placementBounds;
+        if (!bounds) return true;
+        return (
+            position.x >= bounds.x &&
+            position.x <= bounds.x + bounds.width &&
+            position.y >= bounds.y &&
+            position.y <= bounds.y + bounds.height
+        );
     };
 
     const uploadJson = () => {
@@ -99,8 +107,6 @@ const Canvas = observer(() => {
         reader.onload = (event) => {
             try {
                 const json = event.target?.result as string;
-                // Implement hydrate logic for widgets
-                console.log("loading new JSON")
                 designStore.hydrate(json);
                 designStore.widgets.forEach(widget => widget.selectedStreams = undefined);
                 rebuildReactFlowState();
@@ -146,11 +152,26 @@ const Canvas = observer(() => {
 
     const onDragOver = (e: React.DragEvent) => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+
+        const bounds = (e.target as HTMLDivElement).getBoundingClientRect();
+        const position = project({
+            x: e.clientX - bounds.left - 50,
+            y: e.clientY - bounds.top - 20,
+        });
+
+        if (!isWithinBounds(position)) {
+            setIsDropInvalid(true);
+            e.dataTransfer.dropEffect = 'none';
+        } else {
+            setIsDropInvalid(false);
+            e.dataTransfer.dropEffect = 'move';
+        }
     };
 
     const onDrop = (e: React.DragEvent) => {
         e.preventDefault();
+        setIsDropInvalid(false);
+
         const widgetType = e.dataTransfer.getData('application/reactflow');
         if (!widgetType) return;
 
@@ -160,23 +181,32 @@ const Canvas = observer(() => {
             y: e.clientY - bounds.top - 20,
         });
 
+        if (!isWithinBounds(position)) {
+            return;
+        }
+
         addWidget(widgetType as any, position);
         designStore.saveHistory();
     };
 
     const onNodeDragStop = (e: React.MouseEvent, node: Node) => {
-        designStore.updateWidgetPosition(node.id, node.position)
+        if (!isWithinBounds(node.position)) {
+            setIsDropInvalid(true);
+            return;
+        }
+        setIsDropInvalid(false);
+        designStore.updateWidgetPosition(node.id, node.position);
         designStore.saveHistory();
-    }
+    };
+    
 
     const addWidget = (type: WidgetType, position: { x: number, y: number }) => {
         const id = designStore.generateWidgetId();
         const label = `${type}_${id}`;
         let widget: any = { id, type, label, position, style: { color: '', font: '' } };
         if (type === 'StaticImage') {
-            // StaticImage does not use color, but supports other customizations
             widget.style = { font: '', width: 120, height: 120, borderRadius: 8 };
-            widget.imageUrl = undefined; // Placeholder for uploaded image
+            widget.imageUrl = undefined;
         }
         designStore.addWidget(widget);
     };
@@ -184,9 +214,18 @@ const Canvas = observer(() => {
     const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
         event.preventDefault();
         designStore.setSelectedWidgets([node.id]);
+    
+        if (!canvasRef.current) return;
+        const canvasBounds = canvasRef.current.getBoundingClientRect();
+    
+        // Position relativ zum Canvas
+        const x = event.clientX - canvasBounds.left;
+        const y = event.clientY - canvasBounds.top;
+    
+        setPopupPosition({ x, y });
         setShowPropertiesPopup(true);
-        setPopupPosition({ x: event.clientX, y: event.clientY });
     };
+    
 
     const handleCanvasClick = () => {
         canvasRef.current?.focus();
@@ -203,7 +242,13 @@ const Canvas = observer(() => {
             ref={canvasRef}
             tabIndex={0}
             onKeyDown={handleKeyDown}
-            style={{ width: '100%', height: '100vh', outline: 'none' }}
+            style={{
+                width: '100%',
+                height: '100vh',
+                outline: 'none',
+                position: 'relative',
+                cursor: isDropInvalid ? 'not-allowed' : (drawingRectangle ? 'crosshair' : 'default'),
+            }}
             onDrop={onDrop}
             onDragOver={onDragOver}
         >
@@ -223,14 +268,8 @@ const Canvas = observer(() => {
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
-                onNodesChange={(changes) => {
-                    onNodesChange(changes);
-                    handleCanvasInteractionStart();
-                }}
-                onEdgesChange={(changes) => {
-                    onEdgesChange(changes);
-                    handleCanvasInteractionStart();
-                }}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
                 nodeTypes={widgetTypes}
                 onSelectionChange={({ nodes }) => {
                     designStore.setSelectedWidgets(nodes.map(n => n.id));
@@ -243,11 +282,29 @@ const Canvas = observer(() => {
                 onNodeDragStop={onNodeDragStop}
                 fitView
                 panOnScroll={false}
+                zoomOnScroll={false}
+                zoomOnPinch={false}
+                zoomOnDoubleClick={false}
+                panOnDrag={false}
             >
                 <MiniMap />
                 <Background />
             </ReactFlow>
-
+            <BorderOverlay />
+            {designStore.placementBounds && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        left: designStore.placementBounds.x,
+                        top: designStore.placementBounds.y,
+                        width: designStore.placementBounds.width,
+                        height: designStore.placementBounds.height,
+                        border: '2px dashed red',
+                        pointerEvents: 'none',
+                        zIndex: 5
+                    }}
+                />
+            )}
             {showPropertiesPopup && popupPosition && (
                 <div style={{ position: 'absolute', top: popupPosition.y, left: popupPosition.x }}>
                     <PropertiesPopup title="Widget" />
