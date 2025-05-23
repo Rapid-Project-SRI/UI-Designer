@@ -17,6 +17,7 @@ import '../styles/Canvas.css';
 import PropertiesPopup from './PropertiesPopup';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import InfoIcon from './InfoIcon';
 
 const Canvas = observer(() => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -340,6 +341,7 @@ const Canvas = observer(() => {
                 <button onClick={downloadJson}>Download JSON</button>
                 <button onClick={uploadJson} style={{ marginLeft: 8 }}>Upload JSON</button>
                 <button onClick={downloadRAPIDSimJson} style={{ marginLeft: 8 }}>Download RAPID Simulation</button>
+                <InfoIcon />
                 <input
                     type="file"
                     ref={fileInputRef}
