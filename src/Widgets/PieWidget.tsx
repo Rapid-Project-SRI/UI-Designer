@@ -27,7 +27,7 @@ const PieWidget: React.FC<NodeProps<PieWidgetProps>> = observer(({ data }) => {
   return (
     <WidgetCard header={label}>
       <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
-        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
         <PieChart
           series={[
             {
@@ -43,7 +43,7 @@ const PieWidget: React.FC<NodeProps<PieWidgetProps>> = observer(({ data }) => {
           margin={{ top: 10, right: 120, bottom: 10, left: 10 }}
         />
         {widgetId && <StreamInfo widgetId={widgetId} />}
-        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+        <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       </div>
     </WidgetCard>
   );

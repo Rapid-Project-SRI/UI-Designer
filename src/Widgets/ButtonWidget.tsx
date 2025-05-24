@@ -26,7 +26,7 @@ const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data })
   return (
     <WidgetCard header={label}>
       <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <div className='m-3'>
         <Button
         className='rounded-lg'

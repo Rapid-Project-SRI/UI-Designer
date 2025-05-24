@@ -29,12 +29,12 @@ const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(
                     fontFamily: font,
                 }}
             >
-                <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+                <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
                 <div className='w-full'>
                     <LinearProgress variant="determinate" value={percentage} />
                 </div>
                 {widgetId && <StreamInfo widgetId={widgetId} />}
-                <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+                <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
             </div>
         </WidgetCard>
     );

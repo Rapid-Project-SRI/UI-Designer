@@ -52,7 +52,7 @@ const StaticImageWidget: React.FC<NodeProps<StaticImageWidgetProps>> = observer(
         onDrop={handleDrop}
         onDragOver={e => e.preventDefault()}
       >
-        <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+        <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
         {imageUrl ? (
           <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: 120, borderRadius: 8 }} />
         ) : (
@@ -68,7 +68,7 @@ const StaticImageWidget: React.FC<NodeProps<StaticImageWidgetProps>> = observer(
             />
           </div>
         )}
-        <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+        <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       </div>
     </WidgetCard>
   );

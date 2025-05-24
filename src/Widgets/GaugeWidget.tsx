@@ -36,7 +36,7 @@ const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) =
   return (
   <WidgetCard header={label}>
     <div style={{ width }}>
-      <Handle type="target" position={Position.Top} style={{ display: 'none' }} />
+      <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <div style={{ font, fontSize }}>
         <CircularProgressbar
           value={percentage}
@@ -50,7 +50,7 @@ const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) =
         />
         {widgetId && <StreamInfo widgetId={widgetId} />}
       </div>
-      <Handle type="source" position={Position.Bottom} style={{ display: 'none' }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
     </div>
     </WidgetCard>
   );
