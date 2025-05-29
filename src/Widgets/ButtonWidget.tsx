@@ -34,7 +34,7 @@ const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data })
         style={{ backgroundColor: color, fontSize, fontFamily: font }}
         onClick={onClick}
       >
-        Button
+        {label}
       </Button>
       </div>
       {widgetId && <StreamInfo widgetId={widgetId} />}
