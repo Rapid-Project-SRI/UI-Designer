@@ -96,8 +96,8 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
                         </button>
                       )}
                     </div>
+                    <p style={{ color: '#666' }}>{outputStream.description}</p>
                     <p><strong>Label:</strong> {outputStream.label}</p>
-                    <p><strong>Variable Name:</strong> {outputStream.variableName}</p>
                     {hasConnectedEvents && (
                       <p className="connection-info">
                         <strong>Connected Events:</strong> {connectedEventStreams.length}
@@ -118,6 +118,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
                             <span className="node-icon">I</span>
                             <span className="node-title">Interaction Stream</span>
                           </div>
+                          <p style={{ color: '#666' }}>{eventStream.description}</p>
                           <p><strong>Label:</strong> {eventStream.label}</p>
                           <p><strong>Variable Name:</strong> {eventStream.variableName}</p>
                         </div>
@@ -142,8 +143,8 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
                       <span className="node-icon">I</span>
                       <span className="node-title">Interaction Stream</span>
                     </div>
+                    <p style={{ color: '#666' }}>{eventStream.description}</p>
                     <p><strong>Label:</strong> {eventStream.label}</p>
-                    <p><strong>Variable Name:</strong> {eventStream.variableName}</p>
                   </div>
                 ))}
               </div>

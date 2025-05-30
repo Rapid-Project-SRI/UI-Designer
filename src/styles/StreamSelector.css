@@ -252,15 +252,6 @@
     position: relative;
 }
 
-.subgroup-item::before {
-    content: '└─';
-    position: absolute;
-    left: -1.5rem;
-    top: 0.75rem;
-    color: #888;
-    font-family: monospace;
-}
-
 .connection-info {
     font-style: italic;
     color: #666;
