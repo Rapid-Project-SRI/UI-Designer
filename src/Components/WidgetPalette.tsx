@@ -21,7 +21,7 @@ function WidgetPalette() {
 
   return (
     <div className='p-2 flex flex-col min-w-full bg-primary gap-2 h-full overflow-y-auto'>
-      <h2 className='font-bold'>Widget Libary</h2>
+      <h2 className='font-bold'>Widget Library</h2>
     
       <WidgetLibrarySection title="Pie Chart">
         <div onDragStart={(event) => onDragStart(event, 'Pie')} draggable>

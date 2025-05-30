@@ -1,68 +1,42 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# UI Design Framework
 
-## Available Scripts
+## Table of Contents
+- [About](#about)
+- [Installation](#installation)
+- [Main Features](#main-features)
+- [Documentation](#documentation)
+- [RAPID Frameworks](#rapid-frameworks)
+## About
+The UI Design Framework allows the users to quickly create a UI design and connect it to the streams. It features a drag and drop interface with a library of widgets that can be configured and connected to streams. 
 
-In the project directory, you can run:
+- Connects with other [RAPID Frameworks](#rapid-frameworks)
 
-### `npm start`
+## Installation
+This project requires Node.js. Git must be installed in order for cloning to work.
+1. Download or clone the project. To clone to project, run `git clone https://github.com/Rapid-Project-SRI/UINewStructure`. 
+2. Run `npm i` to download all dependencies
+3. Run `npm start` to run the project on your local host
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Main Features
+**Widget Library**<br>
+The Widget Library houses all the currently available widgets for the user to use in the UI design. It features both display only widgets and interactive widgets, as well as static widgets. 
+![Widget Library Image](/readme_images/widgetlibrary.png)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+**Stream Display**<br>
+The Stream Display allows for users to upload their streams created from the [Simulation Designer](https://github.com/Rapid-Project-SRI/Simulation-Designer).
+![Upload Stream](/readme_images/uploadstream.png)
+Once the streams are uploaded, the user will be able to see all streams as well as which streams interact with which. The user can then use these streams to connect with their widgets.
+![Stream Displays](/readme_images/streamdisplays.png)
 
-### `npm test`
+**Workspace**<br>
+The Workspace is where all the widgets from the widget library are dragged onto and configured. The widgets can be placed onto the canvas and moved to their desired locations. The user can connect streams from the stream display to the widgets as well as customize it.
+![Workspace](/readme_images/workspace.png)
+Once the user is done with creating their UI, they can export it by clicking on `Download RAPID Simulation` and move on to the [Simulator](https://github.com/Rapid-Project-SRI/Simulator).
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Documentation
+For more detailed documentation and a complete list of all features, click [here](add link to docs once they are complete).
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## RAPID Frameworks
+- [Simulation Designer](https://github.com/Rapid-Project-SRI/Simulation-Designer): A node based approach to creating data streams that can be used in the UI Designer.
+- [UI Designer](https://github.com/Rapid-Project-SRI/UINewStructure): A drag and drop interface that allows users to create a UI and connect their data streams.
+- [Simulator](https://github.com/Rapid-Project-SRI/Simulator): A way to rapidly execut the UI design and its connected streams.
