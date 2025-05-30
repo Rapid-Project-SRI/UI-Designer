@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import '../styles/CustomWidget.css';
 import { designStore, Widget } from '../storage/DesignStore';
 import { observer } from 'mobx-react-lite';
 
-interface CustomWidgetProps {
-  selectedWidget: Widget
-}
+const CustomWidget: React.FC = observer(() => {
+  const selectedWidget = designStore.widgets.find(w => designStore.selectedWidgetIds.includes(w.id));
 
-const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) => {
   const [isColorOpen, setIsColorOpen] = useState(false);
   const [isFontOpen, setIsFontOpen] = useState(false);
-  const [labelText, setLabelText] = useState(selectedWidget.label);
-  const [sizeInput, setSizeInput] = useState(selectedWidget.style.width || 80);
+  // const [labelText, setLabelText] = useState(selectedWidget.label);
+  const [sizeInput, setSizeInput] = useState(selectedWidget?.style.width || 80);
+  const [widgetProps, setWidgetProps] = useState<Widget | null>(selectedWidget || null);
+
+  useEffect(() => {
+    if (!selectedWidget) {
+      setWidgetProps(null);
+    } else {
+      setWidgetProps(selectedWidget);
+    }
+  }, [selectedWidget]);
+
+  if (!selectedWidget) {
+    return null; // Return null to render nothing if no widget is selected
+  }
 
   const toggleColorDropdown = () => {
     setIsColorOpen(!isColorOpen);
@@ -25,34 +36,45 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
   };
 
   const handleColorChange = (color: string) => {
-    if (selectedWidget) {
-      designStore.updateWidgetColor(selectedWidget.id, color);
+    if (!widgetProps) return;
+    const editedWidget: Widget = {
+      ...widgetProps, 
+      style: {
+        ...widgetProps.style,
+        color: color
+      }
     }
+    setWidgetProps(editedWidget);
   };
 
   const handleFontSelect = (font: string) => {
+    if (!widgetProps) return;
     setIsFontOpen(false);
-    if (selectedWidget) {
-      designStore.updateWidgetFont(selectedWidget.id, font);
+    const editedWidget: Widget = {
+      ...widgetProps, 
+      style: {
+        ...widgetProps.style,
+        font: font
+      }
     }
+    setWidgetProps(editedWidget);
   };
 
   const fontOptions = ['Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana'];
 
-  // Proportional scaling
-  const handleApplySize = () => {
-    if (selectedWidget) {
-      const aspectRatio = (selectedWidget.style.height || 80) / (selectedWidget.style.width || 80);
-      const newWidth = Number(sizeInput);
-      const newHeight = Math.round(newWidth * aspectRatio);
-      designStore.updateWidgetSize(selectedWidget.id, newWidth, newHeight);
+  const handleApply = () => {
+    if (selectedWidget && widgetProps) {
+      designStore.updateWidget(selectedWidget.id, widgetProps)
     }
-  };
+  }
 
   const handleLabelChange = (newLabel: string) => {
-    if (selectedWidget) {
-      designStore.updateWidgetLabel(selectedWidget.id, newLabel);
+    if (!widgetProps) return;
+    const editedWidget: Widget = {
+      ...widgetProps, 
+      label: newLabel
     }
+    setWidgetProps(editedWidget);
   };
 
   const isStaticImage = selectedWidget.type === 'StaticImage';
@@ -63,9 +85,9 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
         <label>Label</label>
         <input
           type="text"
-          value={labelText}
+          value={widgetProps?.label || ''}
           onChange={(e) => {
-            setLabelText(e.target.value);
+            // setLabelText(e.target.value);
             handleLabelChange(e.target.value);
           }}
           className="label-input"
@@ -75,7 +97,7 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
       <div className="property-group">
         <label>Font</label>
         <div className="dropdown-toggle" onClick={toggleFontDropdown}>
-          {selectedWidget.style.font || 'Select Font'}
+          {widgetProps?.style.font || 'Select Font'}
           <span className={`arrow ${isFontOpen ? 'up' : 'down'}`}></span>
         </div>
         {isFontOpen && (
@@ -99,14 +121,14 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
         <div className="property-group">
           <label>Color</label>
           <div className="dropdown-toggle" onClick={toggleColorDropdown}>
-            <span className="color-preview" style={{ backgroundColor: selectedWidget.style.color }}></span>
-            {selectedWidget.style.color || 'Select Color'}
+            <span className="color-preview" style={{ backgroundColor: widgetProps?.style.color }}></span>
+            {widgetProps?.style.color || 'Select Color'}
             <span className={`arrow ${isColorOpen ? 'up' : 'down'}`}></span>
           </div>
           {isColorOpen && (
             <div style={{ padding: 10 }}>
-              <HexColorPicker color={selectedWidget.style.color} onChange={handleColorChange} />
-              <div className="color-value">{selectedWidget.style.color}</div>
+              <HexColorPicker color={widgetProps?.style.color || ''} onChange={handleColorChange} />
+              <div className="color-value">{widgetProps?.style.color}</div>
             </div>
           )}
         </div>
@@ -124,7 +146,7 @@ const CustomWidget: React.FC<CustomWidgetProps> = observer(({ selectedWidget }) 
             min={10}
             style={{ width: 60 }}
           />
-          <button onClick={handleApplySize} style={{ padding: '2px 8px', fontSize: 12 }}>Apply</button>
+          <button onClick={handleApply} style={{ padding: '2px 8px', fontSize: 12 }}>Apply</button>
 
            {/* Delete button */}
           <button onClick={() => designStore.deleteWidget(selectedWidget.id)}

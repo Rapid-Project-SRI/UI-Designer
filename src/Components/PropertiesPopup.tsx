@@ -9,10 +9,6 @@ interface PropertiesPopupProps {
 }
 
 const PropertiesPopup: React.FC<PropertiesPopupProps> = observer(({ title }) => {
-    const selectedWidget = designStore.widgets.find(w => designStore.selectedWidgetIds.includes(w.id));
-
-    if (!selectedWidget) return null;
-
     return (
         <div
             className="properties-popup"
@@ -22,9 +18,7 @@ const PropertiesPopup: React.FC<PropertiesPopupProps> = observer(({ title }) => 
                 <h3>{title} Properties</h3>
             </div>
             <div className="properties-popup-content">
-                <CustomWidget
-                    selectedWidget={selectedWidget}
-                />
+                <CustomWidget/>
             </div>
         </div>
     );

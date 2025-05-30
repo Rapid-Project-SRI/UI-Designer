@@ -50,6 +50,7 @@ export class DesignStore {
 
   deleteWidget(id: string) {
     this.widgets = this.widgets.filter((w) => w.id !== id);
+    this.selectedWidgetIds = this.selectedWidgetIds.filter((selectedId) => selectedId !== id);
   }
 
   setSelectedWidgets(ids: string[]) {
@@ -61,6 +62,13 @@ export class DesignStore {
 
   generateWidgetId(): string {
     return `widget_${this.nextWidgetId++}`;
+  }
+
+  updateWidget(id: string, newWidget: Widget) {
+    const index = this.widgets.findIndex((w) => w.id === id);
+    if (index !== -1) {
+      this.widgets[index] = newWidget;
+    }
   }
 
   updateWidgetPosition(id: string, position: { x: number; y: number }) {
