@@ -24,14 +24,22 @@ const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(
         <WidgetCard header={label}>
             <div
                 className='my-2'
-                style={{
-                    width,
-                    fontFamily: font,
+                style={{ 
+                    width: 100,
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    padding: 10,
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: 5,
+                    fontFamily: 'inherit'
                 }}
             >
                 <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
                 <div className='w-full'>
+                <Box sx={{ width: '100%' }}>
                     <LinearProgress variant="determinate" value={percentage} />
+                </Box>
                 </div>
                 {widgetId && <StreamInfo widgetId={widgetId} />}
                 <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />

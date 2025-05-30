@@ -23,9 +23,22 @@ const TextDisplayWidget: React.FC<NodeProps<TextDisplayWidgetProps>> = observer(
 
   return (
     <WidgetCard header={label}>
-      <div style={{ fontFamily: font }} className='flex flex-col items-center gap-2'>
+      <div style={{ 
+      margin: 10, 
+      background: 'transparent', 
+      border: 'none', 
+      display: 'inline-block', 
+      width: 150,
+      fontFamily: 'inherit'
+    }} className='flex flex-col items-center gap-2'>
         <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
-        <Typography variant={variant} gutterBottom style={{ fontSize, color: '#222', fontFamily: font }}>
+        <Typography variant={variant} 
+          gutterBottom 
+          style={{ 
+            fontSize: 15, 
+            color: '#222',
+            fontFamily: 'inherit'
+          }}>
           Example Text
         </Typography>
         {widgetId && <StreamInfo widgetId={widgetId} />}

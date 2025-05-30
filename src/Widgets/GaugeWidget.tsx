@@ -35,7 +35,7 @@ const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) =
 
   return (
   <WidgetCard header={label}>
-    <div style={{ width }}>
+    <div style={{ width: "80px" }}>
       <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
       <div style={{ font, fontSize }}>
         <CircularProgressbar

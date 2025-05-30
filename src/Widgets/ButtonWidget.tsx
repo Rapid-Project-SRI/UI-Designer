@@ -31,7 +31,7 @@ const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data })
         <Button
         className='rounded-lg'
         variant={variant}
-        style={{ backgroundColor: color, fontSize, fontFamily: font }}
+        style={{ backgroundColor: color, fontSize: "inherit", fontFamily: font }}
         onClick={onClick}
       >
         {label}
