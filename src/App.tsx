@@ -5,8 +5,13 @@ import StreamSelector from './Components/StreamSelector';
 import Canvas from './Components/Canvas';
 import WidgetPalette from './Components/WidgetPalette';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
+import { useEffect } from 'react';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    document.title = 'UI Designer';
+  }, []);
+  
   return (
     <div className='h-screen flex flex-col'>
       <div className='bg-white p-2 '>
