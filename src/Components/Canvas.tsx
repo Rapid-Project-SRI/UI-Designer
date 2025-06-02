@@ -211,8 +211,8 @@ const Canvas = observer(() => {
             for (const targetId of targets) {
                 edges.push({
                     id: `viz-${targetId}-${sourceId}`,
-                    source: targetId,
-                    target: sourceId,
+                    source: sourceId,
+                    target: targetId,
                     type: 'default',
                     animated: true,
                     style: { stroke: '#FF00FF', strokeWidth: 2 }
