@@ -38,7 +38,15 @@ const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(
                 <Handle type="target" position={Position.Top} style={{ opacity: 0, pointerEvents: 'none', width: 10, height: 10, background: 'transparent' }} />
                 <div className='w-full'>
                 <Box sx={{ width: '100%' }}>
-                    <LinearProgress variant="determinate" value={percentage} />
+                    <LinearProgress 
+                        variant="determinate" 
+                        value={percentage} 
+                        sx={{
+                            '& .MuiLinearProgress-bar': {
+                                backgroundColor: style.color || '#1976d2'
+                            }
+                        }}
+                    />
                 </Box>
                 </div>
                 {widgetId && <StreamInfo widgetId={widgetId} />}
