@@ -28,7 +28,7 @@ interface GaugeWidgetProps {
 // Convert the GaugeWidget to a React Flow node component
 const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) => {
   const { value = 50, min = 0, max = 100, widgetId } = data;
-  const { style, label, font, width, fontSize, color } = useWidgetCustomization("widget_1");
+  const { style, label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
 
   // Normalize value between 0-100 for the progress bar
   const percentage = ((value - min) / (max - min)) * 100;
