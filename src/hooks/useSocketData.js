@@ -3,7 +3,15 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
 
+/*
+ * useSocketData is a custom React hook for subscribing to real-time data from a socket.io server.
+ * It listens for updates on a given topic and formats the data for chart components.
+ *
+ * @param {string} topic - The socket.io topic/event name to subscribe to.
+ * @returns {object} Chart.js-compatible data object with labels and datasets.
+ */
 export const useSocketData = (topic) => {
+  // State for chart data
   const [data, setData] = useState({
     labels: [],
     datasets: [],
@@ -60,6 +68,7 @@ export const useSocketData = (topic) => {
         });
       };
     }
+    // Subscribe to the topic on mount, and clean up on unmount or topic change
     socket.on(topic, handleData);
     return () => socket.off(topic, handleData);
   }, [topic]);
