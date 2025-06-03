@@ -12,15 +12,22 @@ import ReactFlow, {
 import { designStore, WidgetType } from '../storage/DesignStore';
 import { widgetTypes } from '../types/WidgetTypes';
 import '../styles/Canvas.css';
-import { IoMdDownload } from "react-icons/io";
 import PropertiesPopup from './PropertiesPopup';
 import { simulationStore } from '../storage/SimulationStore';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { buildNodeAdjacencyList, buildWidgetAdjacencyList } from '../utils/AdjacencyListUtils';
 import InfoIcon from './InfoIcon';
+import { generateVisualizerEdges, getSelectedStreamsSignature, rebuildReactFlowState } from '../utils/CanvasUtils';
 
+/*
+ * Canvas component for the UI Designer workspace.
+ * Handles rendering, drag-and-drop, keyboard shortcuts, and visualizer mode.
+ *
+ * @returns {JSX.Element} The rendered Canvas component.
+ */
 const Canvas = observer(() => {
+    // React Flow state for nodes and edges
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
     const { project } = useReactFlow();
@@ -31,23 +38,18 @@ const Canvas = observer(() => {
     const [popupPosition, setPopupPosition] = useState<{ x: number, y: number } | null>(null);
     const [visualizerMode, setVisualizerMode] = useState(false);
 
-    const rebuildReactFlowState = () => {
-        setNodes(
-            designStore.widgets.map((widget) => ({
-                id: widget.id,
-                type: widget.type,
-                data: { widgetId: widget.id },
-                position: widget.position,
-            } as Node))
-        );
-        // Assuming widgets don't have edges, but if they do, handle them similarly
-        setEdges([]);
-    };
-
+    /*
+     * Effect: Rebuilds React Flow state when widgets change.
+     * @return {void}
+     */
     useEffect(() => {
-        rebuildReactFlowState();
-    }, [designStore.widgets.length]);
+        rebuildReactFlowState(setNodes, setEdges);
+    }, [setNodes, setEdges, designStore.widgets.length]);
 
+    /*
+     * Effect: Handles focus/blur events for keyboard shortcuts.
+     * @return {void}
+     */
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -64,38 +66,52 @@ const Canvas = observer(() => {
         };
     }, []);
 
+    /*
+     * Handles keyboard shortcuts for copy, paste, delete, and undo/redo.
+     * @param {React.KeyboardEvent<HTMLDivElement>} e - The keyboard event.
+     * @return {void}
+     */
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (!hasFocus) return;
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
             e.preventDefault();
-            // Implement copy logic for widgets
+            // TODO: Implement copy logic for widgets
         }
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
             e.preventDefault();
-            // Implement paste logic for widgets
-            rebuildReactFlowState();
+            // TODO: Implement paste logic for widgets
+            rebuildReactFlowState(setNodes, setEdges);
         }
 
         if (e.key === 'Backspace') {
             e.preventDefault();
-            // Implement delete logic for selected widgets
+            // Delete selected widgets
             designStore.deleteSelectedWidgets();
-            rebuildReactFlowState();
+            rebuildReactFlowState(setNodes, setEdges);
         }
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
             e.preventDefault();
-            // Implement undo/redo logic if needed
-            rebuildReactFlowState();
+            // TODO: Implement undo/redo logic if needed
+            rebuildReactFlowState(setNodes, setEdges);
         }
     };
 
+    /*
+     * Triggers file input for uploading JSON.
+     * @return {void}
+     */
     const uploadJson = () => {
         fileInputRef.current?.click();
     };
 
+    /*
+     * Handles JSON file upload and hydrates the design store.
+     * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+     * @return {void}
+     */
     const onJsonFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -104,11 +120,11 @@ const Canvas = observer(() => {
         reader.onload = (event) => {
             try {
                 const json = event.target?.result as string;
-                // Implement hydrate logic for widgets
+                // Hydrate widgets from JSON
                 console.log("loading new JSON")
                 designStore.hydrate(json);
                 designStore.widgets.forEach(widget => widget.selectedStreams = undefined);
-                rebuildReactFlowState();
+                rebuildReactFlowState(setNodes, setEdges);
             } catch (err) {
                 console.error("Failed to load JSON:", err);
                 alert("Invalid JSON file.");
@@ -117,6 +133,10 @@ const Canvas = observer(() => {
         reader.readAsText(file);
     };
 
+    /*
+     * Downloads the current widgets as a JSON file.
+     * @return {void}
+     */
     const downloadJson = () => {
         const json = designStore.serialize();
         const blob = new Blob([json], { type: 'application/json' });
@@ -130,6 +150,10 @@ const Canvas = observer(() => {
         URL.revokeObjectURL(url);
     };
 
+    /*
+     * Downloads a combined RAPID Simulation JSON file.
+     * @return {void}
+     */
     const downloadRAPIDSimJson = () => {
         const designJson = JSON.parse(designStore.serialize());
         const simJson = JSON.parse(simulationStore.serialize());
@@ -149,11 +173,21 @@ const Canvas = observer(() => {
         URL.revokeObjectURL(url);
     };
 
+    /*
+     * Handles drag over event for widget drop.
+     * @param {React.DragEvent} e - The drag event.
+     * @return {void}
+     */
     const onDragOver = (e: React.DragEvent) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
     };
 
+    /*
+     * Handles drop event to add a new widget to the canvas.
+     * @param {React.DragEvent} e - The drop event.
+     * @return {void}
+     */
     const onDrop = (e: React.DragEvent) => {
         e.preventDefault();
         const widgetType = e.dataTransfer.getData('application/reactflow');
@@ -169,11 +203,23 @@ const Canvas = observer(() => {
         designStore.saveHistory();
     };
 
+    /*
+     * Handles node drag stop event to update widget position.
+     * @param {React.MouseEvent} e - The mouse event.
+     * @param {Node} node - The node being dragged.
+     * @return {void}
+     */
     const onNodeDragStop = (e: React.MouseEvent, node: Node) => {
         designStore.updateWidgetPosition(node.id, node.position)
         designStore.saveHistory();
     }
 
+    /*
+     * Adds a new widget to the design store.
+     * @param {WidgetType} type - The type of widget to add.
+     * @param {{ x: number, y: number }} position - The position for the new widget.
+     * @return {void}
+     */
     const addWidget = (type: WidgetType, position: { x: number, y: number }) => {
         const id = designStore.generateWidgetId();
         const label = `${type}_${id}`;
@@ -186,6 +232,12 @@ const Canvas = observer(() => {
         designStore.addWidget(widget);
     };
 
+    /*
+     * Handles right-click context menu on a node to show properties popup.
+     * @param {React.MouseEvent} event - The mouse event.
+     * @param {Node} node - The node being right-clicked.
+     * @return {void}
+     */
     const handleNodeContextMenu = (event: React.MouseEvent, node: Node) => {
         event.preventDefault();
         designStore.setSelectedWidgets([node.id]);
@@ -193,44 +245,29 @@ const Canvas = observer(() => {
         setPopupPosition({ x: event.clientX, y: event.clientY });
     };
 
+    /*
+     * Handles click on the canvas to clear selection and hide popup.
+     * @return {void}
+     */
     const handleCanvasClick = () => {
         canvasRef.current?.focus();
         designStore.setSelectedWidgets([]);
         setShowPropertiesPopup(false);
     };
 
+    /*
+     * Handles start of canvas interaction to hide properties popup.
+     * @return {void}
+     */
     const handleCanvasInteractionStart = () => {
         setShowPropertiesPopup(false);
     };
 
-
-    // 3. Generate Visualizer Edges
-    function generateVisualizerEdges(widgetAdj: Record<string, string[]>) {
-        const edges: Edge[] = [];
-        for (const [sourceId, targets] of Object.entries(widgetAdj)) {
-            for (const targetId of targets) {
-                edges.push({
-                    id: `viz-${targetId}-${sourceId}`,
-                    source: sourceId,
-                    target: targetId,
-                    type: 'default',
-                    animated: true,
-                    style: { stroke: '#FF00FF', strokeWidth: 2 }
-                });
-            }
-        }
-        return edges;
-    }
-
-    // Helper: Signature for all widgets' selectedStreams (for effect deps)
-    function getSelectedStreamsSignature() {
-        return designStore.widgets
-            .map(w => `${w.id}:${(w.selectedStreams || []).join(',')}`)
-            .sort()
-            .join('|');
-    }
-
-    // 4. Toggle and Effect
+    /*
+     * Effect: Handles visualizer mode toggle and edge generation.
+     * @return {void}
+     */
+    const selectedStreamsSignature = getSelectedStreamsSignature();
     useEffect(() => {
         if (visualizerMode) {
             // Build adjacency lists and edges using shared utility functions
@@ -240,10 +277,10 @@ const Canvas = observer(() => {
             setEdges(vizEdges);
         } else {
             // Normal mode: no visualizer edges
-            rebuildReactFlowState();
+            rebuildReactFlowState(setNodes, setEdges);
         }
         // Add selectedStreamsSignature to dependencies
-    }, [visualizerMode, designStore.widgets.length, getSelectedStreamsSignature(), simulationStore.nodes.length, simulationStore.edges.length]);
+    }, [visualizerMode, setNodes, setEdges, designStore.widgets.length, selectedStreamsSignature, simulationStore.nodes.length, simulationStore.edges.length]);
 
     return (
         <div
