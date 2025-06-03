@@ -71,38 +71,89 @@
 }
 
 @layer utilities {
-  .rounded-app { border-radius: 8px; }
-  
+  .rounded-app {
+    border-radius: 8px;
+  }
+
   .rounded-t-app {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
+
   .rounded-b-app {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
   }
 
-  .p-app { padding: 20px; }
+  .p-app {
+    padding: 20px;
+  }
 
   /* Background color classes */
-  .bg-bg { background-color: var(--color-bg);}
-  .bg-primary { background-color: var(--color-bg-primary); }
-  .bg-secondary { background-color: var(--color-bg-secondary); }
-  .bg-error { background-color: var(--color-error); }
-  .bg-node-blue-light { background-color: var(--color-node-blue-light); }
-  .bg-node-green-light { background-color: var(--color-node-green-light); }
-  .bg-node-yellow-light { background-color: var(--color-node-yellow-light); }
-  .bg-node-orange-light { background-color: var(--color-node-orange-light); }
-  .bg-node-purple-light { background-color: var(--color-node-purple-light); }
-  .bg-node-gray-light { background-color: var(--color-node-gray-light); }
+  .bg-bg {
+    background-color: var(--color-bg);
+  }
+
+  .bg-primary {
+    background-color: var(--color-bg-primary);
+  }
+
+  .bg-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .bg-error {
+    background-color: var(--color-error);
+  }
+
+  .bg-node-blue-light {
+    background-color: var(--color-node-blue-light);
+  }
+
+  .bg-node-green-light {
+    background-color: var(--color-node-green-light);
+  }
+
+  .bg-node-yellow-light {
+    background-color: var(--color-node-yellow-light);
+  }
+
+  .bg-node-orange-light {
+    background-color: var(--color-node-orange-light);
+  }
+
+  .bg-node-purple-light {
+    background-color: var(--color-node-purple-light);
+  }
+
+  .bg-node-gray-light {
+    background-color: var(--color-node-gray-light);
+  }
 
   /* Text color classes */
-  .text-node-blue-dark { color: var(--color-node-blue-dark); }
-  .text-node-green-dark { color: var(--color-node-green-dark); }
-  .text-node-orange-dark { color: var(--color-node-orange-dark); }
-  .text-node-purple-dark { color: var(--color-node-purple-dark); }
-  .text-node-gray-dark { color: var(--color-node-gray-dark); }
-  .text-node-yellow-dark { color: var(--color-node-yellow-dark); }
+  .text-node-blue-dark {
+    color: var(--color-node-blue-dark);
+  }
+
+  .text-node-green-dark {
+    color: var(--color-node-green-dark);
+  }
+
+  .text-node-orange-dark {
+    color: var(--color-node-orange-dark);
+  }
+
+  .text-node-purple-dark {
+    color: var(--color-node-purple-dark);
+  }
+
+  .text-node-gray-dark {
+    color: var(--color-node-gray-dark);
+  }
+
+  .text-node-yellow-dark {
+    color: var(--color-node-yellow-dark);
+  }
 }
 
 @layer components {
@@ -117,14 +168,15 @@
     background-color: var(--color-error);
     border-radius: 8px;
     padding: 10px;
-    @apply text-white;}
+    @apply text-white;
+  }
 
   .btn-navy {
     background-color: var(--color-bg-secondary);
     border-radius: 8px;
     padding: 10px;
     @apply text-white;
-  } 
+  }
 
   .input-primary {
     background-color: var(--color-bg-primary);
@@ -144,12 +196,12 @@
 }
 
 @layer node {
-  .node-container  {
+  .node-container {
     @apply flex flex-col items-center justify-center p-2 rounded-lg;
   }
 
   .node-letter {
-    @apply  font-bold text-3xl mr-4;
+    @apply font-bold text-3xl mr-4;
     font: var(--font-big-letters);
   }
 
@@ -163,7 +215,7 @@
   .form-label {
     @apply font-bold text-lg mb-1;
   }
-  
+
   .form-input {
     border-color: var(--color-border);
     @apply w-full p-4 border-2 rounded-lg
