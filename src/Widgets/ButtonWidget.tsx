@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 import { WidgetCard } from '../Components/WidgetCard';
 
 /**
- * MUI Button Widget
+ * Button Widget Props to pass into ButtonWidget
  * Props: label (string), onClick (function), variant (string), color (string)
  * Usage: <ButtonWidget label="Click me" onClick={...} variant="contained" color="primary" />
  */
@@ -19,6 +19,11 @@ interface ButtonWidgetProps {
   widgetId: string;
 }
 
+/**
+ * Button widget that allows the user to click as well as customize.
+ * @param {NodeProps<ButtonWidgetProps>} data - Contains label, onClick, and other node data for customization.
+ * @returns {WidgetCard} A rendered button widget with customization and flow handles.
+ */
 const ButtonWidget: React.FC<NodeProps<ButtonWidgetProps>> = observer(({ data }) => {
   const { onClick, variant = 'contained', widgetId } = data;
   const { label, font, width, height, fontSize, color } = useWidgetCustomization(widgetId);

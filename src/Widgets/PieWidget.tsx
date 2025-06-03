@@ -1,3 +1,5 @@
+// TODO: Live data not implemented
+
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -6,6 +8,11 @@ import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
 import { WidgetCard } from '../Components/WidgetCard';
 
+/**
+ * Pie Widget Props to pass into LineWidget
+ * Props: data ({id, value}[]), widgetId(string)
+ * Usage: <PieChart ... series={[{data}]} .../>
+ */
 interface PieWidgetProps {
   data?: { id: number; value: number }[];
   widgetId: string;
@@ -17,6 +24,11 @@ const MOCK_DATA = [
   { id: 2, value: 30 },
 ];
 
+/**
+ * Pie chart widget that displays the given live data. 
+ * @param {NodeProps<PieWidgetProps>} data - Contains dataset, widgetId and other node data for customization.
+ * @returns {WidgetCard} A rendered pie chart widget with customization and flow handles.
+ */
 const PieWidget: React.FC<NodeProps<PieWidgetProps>> = observer(({ data }) => {
   const { data: pieData, widgetId } = data;
   const { label, font, width = 120, fontSize, color } = useWidgetCustomization(widgetId);

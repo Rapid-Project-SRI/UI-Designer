@@ -11,12 +11,10 @@ import { WidgetCard } from '../Components/WidgetCard';
 import PropertiesPopup from '../Components/PropertiesPopup';
 
 /**
- * Gauge Widget (Consumer) using react-circular-progressbar
+ * Gauge Widget Props to use in GaugeWidget
  * Props: value (number), min (number), max (number), label (string)
  * Usage: <GaugeWidget value={60} min={0} max={100} label="Speed" />
  */
-
-// Define the props for the GaugeWidget
 interface GaugeWidgetProps {
   value?: number;
   min?: number;
@@ -25,12 +23,15 @@ interface GaugeWidgetProps {
   widgetId: string;
 }
 
-// Convert the GaugeWidget to a React Flow node component
+/**
+ * Gauge widget that shows the given value. Includes customizable color and label.
+ * @param {NodeProps<GaugeWidgetProps>} data - Contains value, label, and other node data for customization.
+ * @returns {WidgetCard} A rendered gauge widget with customization and flow handles.
+ */
 const GaugeWidget: React.FC<NodeProps<GaugeWidgetProps>> = observer(({ data }) => {
   const { value = 50, min = 0, max = 100, widgetId } = data;
   const { style, label, font, width, fontSize, color } = useWidgetCustomization(widgetId);
 
-  // Normalize value between 0-100 for the progress bar
   const percentage = ((value - min) / (max - min)) * 100;
 
   return (

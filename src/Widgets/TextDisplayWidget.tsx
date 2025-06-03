@@ -9,7 +9,7 @@ import { WidgetCard } from '../Components/WidgetCard';
 /**
  * MUI Text Display Widget (Consumer)
  * Props: text (string), variant (string)
- * Usage: <TextDisplayWidget text="Display this" variant="body1" />
+ * Usage: <Typography>{text}</Typography>
  */
 interface TextDisplayWidgetProps {
   text?: string;
@@ -17,6 +17,11 @@ interface TextDisplayWidgetProps {
   widgetId: string;
 }
 
+/**
+ * TextDisplay widget that shows the given text
+ * @param {NodeProps<TextDisplayWidgetProps>} data - Contains text, label, and other node data for customization.
+ * @returns {WidgetCard} A rendered text display widget with customization and flow handles.
+ */
 const TextDisplayWidget: React.FC<NodeProps<TextDisplayWidgetProps>> = observer(({ data }) => {
   const { text = '', variant = 'body1', widgetId } = data;
   const { label, font, width, fontSize } = useWidgetCustomization(widgetId);
