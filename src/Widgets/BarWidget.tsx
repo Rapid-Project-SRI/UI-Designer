@@ -1,3 +1,5 @@
+// TODO: Live data is not implemented
+
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { BarChart } from '@mui/x-charts/BarChart';
@@ -6,10 +8,20 @@ import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
 import { WidgetCard } from '../Components/WidgetCard';
 
+/**
+ * BarWidget Props
+ * Props: widgetId: string
+ * Usage: useWidgetCustomization(widgetId)
+ */
 interface BarWidgetProps {
   widgetId: string;
 }
 
+/**
+  * Bar Graph widget that displays a customizable bar chart.
+  * @param {NodeProps<BarWidgetProps>} data - Contains widgetId and other node data for customization.
+  * @returns {WidgetCard} A rendered bar chart widget with customization and flow handles.
+*/
 const BarWidget: React.FC<NodeProps<BarWidgetProps>> = observer(({ data }) => {
   const { widgetId } = data;
   const { label, font, width, height, fontSize } = useWidgetCustomization(widgetId);

@@ -6,6 +6,11 @@ import { observer } from 'mobx-react-lite';
 import { LinearProgress, Box } from '@mui/material';
 import { WidgetCard } from '../Components/WidgetCard';
 
+/**
+ * Progress Bar Widget Props to use in ProgressBarWidget
+ * Props: value (number), min (number), max (number), label (string)
+ * Usage: <LinearProgress value={60} min={0} max={100} label="Speed" />
+ */
 interface ProgressBarWidgetProps {
     value?: number;
     min?: number;
@@ -14,6 +19,11 @@ interface ProgressBarWidgetProps {
     widgetId: string;
 }
 
+/**
+ * Progress Bar widget that shows the given value. Includes customizable color and label.
+ * @param {NodeProps<ProgressBarWidgetProps>} data - Contains value, label, and other node data for customization.
+ * @returns {WidgetCard} A rendered progress bar widget with customization and flow handles.
+ */
 const ProgressBarWidget: React.FC<NodeProps<ProgressBarWidgetProps>> = observer(({ data }) => {
     const { value = 50, min = 0, max = 100, widgetId } = data;
     const { style, label, font, width, fontSize, color } = useWidgetCustomization(widgetId);

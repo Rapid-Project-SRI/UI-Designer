@@ -6,12 +6,23 @@ import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
 import { observer } from 'mobx-react-lite';
 import { WidgetCard } from '../Components/WidgetCard';
 
+/**
+ * Text Display Widget Props to pass into TextBoxWidget
+ * Props: text (string), variant (string)
+ * Usage: <Typography>{text.map ...}</Typography>
+ */
 interface TextBoxWidgetProps {
     text?: [];
     variant?: 'body1' | 'body2' | 'caption' | 'button' | 'overline';
     widgetId: string;
 }
 
+/**
+ * Textbox widget that shows 4 lines of recent text given. 
+ * The textbox takes in new text given and shifts it so only the last 4 are shown
+ * @param {NodeProps<TextBoxWidgetProps>} data - Contains text, label, and other node data for customization.
+ * @returns {WidgetCard} A rendered textbox widget with customization and flow handles.
+ */
 const TextBoxWidget: React.FC<NodeProps<TextBoxWidgetProps>> = observer(({ data }) => {
     const { text = ["string1", "string2", "string3", "string4", "string5", "string6"], variant = 'body1', widgetId } = data;
     const { label, font, width, height, fontSize } = useWidgetCustomization(widgetId);

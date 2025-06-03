@@ -1,3 +1,5 @@
+// TODO: Static Image does not work in the Simulator. 
+
 import React, { useRef, useState } from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import { useWidgetCustomization } from '../hooks/useWidgetCustomization';
@@ -5,12 +7,21 @@ import { observer } from 'mobx-react-lite';
 import { designStore } from '../storage/DesignStore';
 import { WidgetCard } from '../Components/WidgetCard';
 
+/**
+ * Static Image widget props to pass into StaticImageWidget
+ * Props: imageUrl (string), widgetId (string)
+ * Usage: <img src={imageUrl} />
+ */
 interface StaticImageWidgetProps {
   imageUrl?: string;
   widgetId: string;
 }
 
-
+/**
+ * Static Image Widget that allows the user to upload an image into their UI design.
+ * @param {NodeProps<StaticImageWidgetProps>} data - Contains value, label, and other node data for customization.
+ * @returns {WidgetCard} A rendered progress bar widget with customization and flow handles.
+ */
 const StaticImageWidget: React.FC<NodeProps<StaticImageWidgetProps>> = observer(({ data }) => {
   const { widgetId } = data;
   const widget = designStore.widgets.find(w => w.id === widgetId);
@@ -32,6 +43,10 @@ const StaticImageWidget: React.FC<NodeProps<StaticImageWidgetProps>> = observer(
     }
   };
 
+  /**
+   * Defines what should be done when a file is uploaded
+   * @param e - onChange which is called when user uploads an image
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];

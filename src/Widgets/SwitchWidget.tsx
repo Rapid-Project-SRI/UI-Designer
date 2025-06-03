@@ -1,3 +1,5 @@
+// TODO: Inputs not connected with the Simulator
+
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import Switch from '@mui/material/Switch';
@@ -8,7 +10,7 @@ import { observer } from 'mobx-react-lite';
 import { WidgetCard } from '../Components/WidgetCard';
 
 /**
- * MUI Switch Widget
+ * Switch Widget Props to pass into SwitchWidget
  * Props: checked (bool), onChange (func), label (string)
  * Usage: <SwitchWidget checked={true} onChange={...} label="Toggle" />
  */
@@ -19,6 +21,11 @@ interface SwitchWidgetProps {
   widgetId: string;
 }
 
+/**
+ * Switch widget that allows the user to toggle on and off
+ * @param {NodeProps<SwitchWidgetProps>} data - Contains label, onChange, and other node data for customization.
+ * @returns {WidgetCard} A rendered switch widget with customization and flow handles.
+ */
 const SwitchWidget: React.FC<NodeProps<SwitchWidgetProps>> = observer(({ data }) => {
   const { checked = false, onChange, widgetId } = data;
   const { label: widgetLabel, font, width, fontSize } = useWidgetCustomization(widgetId);
