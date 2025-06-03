@@ -12,8 +12,21 @@ import WidgetLibrarySection from './WidgetLibarySection';
 import { WidgetCard } from './WidgetCard';
 
 
+/*
+ * WidgetPalette displays the draggable widget library for the UI Designer.
+ * Allows users to drag widgets onto the canvas, organized by type in collapsible sections.
+ *
+ * @returns {JSX.Element} The rendered widget palette.
+ */
 function WidgetPalette() {
-  // When dragging starts, store the widget type in the dataTransfer object.
+  /*
+   * Handles the drag start event for a widget card.
+   * Stores the widget type in the dataTransfer object for React Flow.
+   *
+   * @param {React.DragEvent<HTMLDivElement>} event - The drag event.
+   * @param {WidgetType} widgetType - The type of widget being dragged.
+   * @return {void}
+   */
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, widgetType: WidgetType) => {
     event.dataTransfer.setData('application/reactflow', widgetType);
     event.dataTransfer.effectAllowed = 'move';
@@ -22,7 +35,7 @@ function WidgetPalette() {
   return (
     <div className='p-2 flex flex-col min-w-full bg-primary gap-2 h-full overflow-y-auto'>
       <h2 className='font-bold'>Widget Library</h2>
-    
+      {/* Each WidgetLibrarySection groups related widgets for better organization */}
       <WidgetLibrarySection title="Pie Chart">
         <div onDragStart={(event) => onDragStart(event, 'Pie')} draggable>
           <WidgetCard header="Pie Widget">
@@ -30,7 +43,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Bar Chart">
         <div draggable onDragStart={(event) => onDragStart(event, 'Bar')}>
           <WidgetCard header="Bar Widget">
@@ -43,7 +55,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Line Graphs">
         <div draggable onDragStart={(event) => onDragStart(event, 'Line')}>
           <WidgetCard header="Line Chart">
@@ -51,7 +62,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Buttons">
         <div draggable onDragStart={(event) => onDragStart(event, 'Button')}>
           <WidgetCard header="Button Widget">
@@ -59,7 +69,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Gauges">
         <div draggable onDragStart={(event) => onDragStart(event, 'Gauge')}>
           <WidgetCard header="Gauge Widget">
@@ -67,7 +76,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Textboxes">
         <div draggable onDragStart={(event) => onDragStart(event, 'TextDisplay')}>
           <WidgetCard header="Text Display Widget">
@@ -80,7 +88,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Switches">
         <div draggable onDragStart={(event) => onDragStart(event, 'Switch')}>
           <WidgetCard header="Switch Widget">
@@ -88,7 +95,6 @@ function WidgetPalette() {
           </WidgetCard>
         </div>
       </WidgetLibrarySection>
-
       <WidgetLibrarySection title="Images">
         <div draggable onDragStart={(event) => onDragStart(event, 'StaticImage')}>
           <WidgetCard header="Static Image Widget">

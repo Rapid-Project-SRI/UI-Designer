@@ -11,10 +11,23 @@ interface StreamSelectorProps {
   onClose: () => void;
 }
 
+/*
+ * StreamSelector allows users to select and connect streams (data or event) to the currently selected widget.
+ * Displays grouped and orphaned streams, and supports toggling group expansion and stream selection.
+ *
+ * @param {StreamSelectorProps} props - Contains the onClose callback for closing the selector.
+ * @returns {JSX.Element} The rendered stream selector sidebar.
+ */
 const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => {
+  // Tracks which streams are currently selected for the widget
   const [currentSelectedNode, setCurrentSelectedNode] = useState<string[]>([]);
+  // Tracks which stream groups are expanded in the UI
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
+  /*
+   * Effect: Updates the selected streams when the selected widget changes.
+   * @return {void}
+   */
   useEffect(() => {
     if (designStore.selectedWidgetIds.length > 0) {
       const selectedWidget = designStore.widgets.find(w => w.id === designStore.selectedWidgetIds[0]);
@@ -24,6 +37,11 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
     }
   }, [designStore.selectedWidgetIds]);
 
+  /*
+   * Handles clicking a stream node to toggle its selection for the widget.
+   * @param {any} node - The stream node object (output or event stream).
+   * @return {void}
+   */
   const handleNodeClick = (node: any) => {
     if (designStore.selectedWidgetIds.length > 0) {
       const selectedWidgetId = designStore.selectedWidgetIds[0];
@@ -35,6 +53,11 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
     }
   };
 
+  /*
+   * Toggles the expansion state of a stream group (output node).
+   * @param {string} outputNodeId - The ID of the output node group to expand/collapse.
+   * @return {void}
+   */
   const toggleGroupExpansion = (outputNodeId: string) => {
     const newExpanded = new Set(expandedGroups);
     if (newExpanded.has(outputNodeId)) {
@@ -45,9 +68,10 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
     setExpandedGroups(newExpanded);
   };
 
+  // The currently selected widget (if any)
   const selectedWidget = designStore.widgets.find(w => w.id === designStore.selectedWidgetIds[0]);
 
-  // Get grouped streams using the adjacency list
+  // Get grouped and orphaned streams using the adjacency list utility
   const { groupedStreams, orphanedEventStreams } = getGroupedStreams();
 
   return (
@@ -59,6 +83,7 @@ const StreamSelector: React.FC<StreamSelectorProps> = observer(({ onClose }) => 
 
       <div className="sidebar-content" style={{ overflowY: 'auto' }}>
         {selectedWidget && <h4>Selected Widget: {selectedWidget.label}</h4>}
+        {/* If no simulation file is loaded, show the file uploader */}
         {!simulationStore.fileName ? (
           <FileUploader />
         ) : (
